@@ -19,8 +19,8 @@ import org.bukkit.plugin.RegisteredListener;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.ONLY_IN_GAME)
 @CommandParameters(description = "Pretty rainbow trails.", usage = "/<command> [off]")
-public class Command_trail extends TFM_Command
-{
+public class Command_trail extends TFM_Command {
+
     private static Listener movementListener = null;
     private static final List<Player> trailPlayers = new ArrayList<Player>();
     private static final Random RANDOM = new Random();
@@ -43,54 +43,39 @@ public class Command_trail extends TFM_Command
             Material.BLACK_WOOL);
 
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length > 0 && "off".equals(args[0]))
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length > 0 && "off".equals(args[0])) {
             trailPlayers.remove(sender_p);
 
             playerMsg("Trail disabled.");
-        }
-        else
-        {
-            if (!trailPlayers.contains(sender_p))
-            {
+        } else {
+            if (!trailPlayers.contains(sender_p)) {
                 trailPlayers.add(sender_p);
             }
 
             playerMsg("Trail enabled. Use \"/trail off\" to disable.");
         }
 
-        if (!trailPlayers.isEmpty())
-        {
+        if (!trailPlayers.isEmpty()) {
             registerMovementHandler();
-        }
-        else
-        {
+        } else {
             unregisterMovementHandler();
         }
 
         return true;
     }
 
-    private static void registerMovementHandler()
-    {
-        if (getRegisteredListener(movementListener) == null)
-        {
-            Bukkit.getPluginManager().registerEvents(movementListener = new Listener()
-            {
+    private static void registerMovementHandler() {
+        if (getRegisteredListener(movementListener) == null) {
+            Bukkit.getPluginManager().registerEvents(movementListener = new Listener() {
                 @EventHandler(priority = EventPriority.NORMAL)
-                public void onPlayerMove(PlayerMoveEvent event)
-                {
+                public void onPlayerMove(PlayerMoveEvent event) {
                     Player player = event.getPlayer();
-                    if (trailPlayers.contains(player))
-                    {
+                    if (trailPlayers.contains(player)) {
                         Block fromBlock = event.getFrom().getBlock();
-                        if (fromBlock.isEmpty())
-                        {
+                        if (fromBlock.isEmpty()) {
                             Block toBlock = event.getTo().getBlock();
-                            if (!fromBlock.equals(toBlock))
-                            {
+                            if (!fromBlock.equals(toBlock)) {
                                 fromBlock.setType(WOOL_COLOURS.get(RANDOM.nextInt(WOOL_COLOURS.size())));
                             }
                         }
@@ -100,47 +85,37 @@ public class Command_trail extends TFM_Command
         }
     }
 
-    private static void unregisterMovementHandler()
-    {
+    private static void unregisterMovementHandler() {
         Listener registeredListener = getRegisteredListener(movementListener);
-        if (registeredListener != null)
-        {
+        if (registeredListener != null) {
             PlayerMoveEvent.getHandlerList().unregister(registeredListener);
         }
     }
 
-    private static Listener getRegisteredListener(Listener listener)
-    {
+    private static Listener getRegisteredListener(Listener listener) {
         RegisteredListener[] registeredListeners = PlayerMoveEvent.getHandlerList().getRegisteredListeners();
-        for (RegisteredListener registeredListener : registeredListeners)
-        {
-            if (registeredListener.getListener() == listener)
-            {
+        for (RegisteredListener registeredListener : registeredListeners) {
+            if (registeredListener.getListener() == listener) {
                 return listener;
             }
         }
         return null;
     }
 
-    public static void startTrail(Player player)
-    {
-        if (!trailPlayers.contains(player))
-        {
+    public static void startTrail(Player player) {
+        if (!trailPlayers.contains(player)) {
             trailPlayers.add(player);
         }
 
-        if (!trailPlayers.isEmpty())
-        {
+        if (!trailPlayers.isEmpty()) {
             registerMovementHandler();
         }
     }
 
-    public static void stopTrail(Player player)
-    {
+    public static void stopTrail(Player player) {
         trailPlayers.remove(player);
 
-        if (trailPlayers.isEmpty())
-        {
+        if (trailPlayers.isEmpty()) {
             unregisterMovementHandler();
         }
     }

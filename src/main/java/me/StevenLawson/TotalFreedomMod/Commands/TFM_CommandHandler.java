@@ -8,18 +8,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TFM_CommandHandler
-{
+public class TFM_CommandHandler {
+
     public static final String COMMAND_PATH = TFM_Command.class.getPackage().getName(); // "me.StevenLawson.TotalFreedomMod.Commands";
     public static final String COMMAND_PREFIX = "Command_";
 
-    public static boolean handleCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-    {
+    public static boolean handleCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         final Player playerSender;
         final boolean senderIsConsole;
 
-        if (sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             senderIsConsole = false;
             playerSender = (Player) sender;
 
@@ -28,9 +26,7 @@ public class TFM_CommandHandler
                     ChatColor.stripColor(playerSender.getDisplayName()),
                     commandLabel,
                     StringUtils.join(args, " ")), true);
-        }
-        else
-        {
+        } else {
             senderIsConsole = true;
             playerSender = null;
 
@@ -41,17 +37,14 @@ public class TFM_CommandHandler
         }
 
         final TFM_Command dispatcher;
-        try
-        {
+        try {
             final ClassLoader classLoader = TotalFreedomMod.class.getClassLoader();
             dispatcher = (TFM_Command) classLoader.loadClass(String.format("%s.%s%s",
                     COMMAND_PATH,
                     COMMAND_PREFIX,
                     cmd.getName().toLowerCase())).newInstance();
             dispatcher.setup(TotalFreedomMod.plugin, sender, dispatcher.getClass());
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe("Could not load command: " + cmd.getName());
             TFM_Log.severe(ex);
 
@@ -59,18 +52,14 @@ public class TFM_CommandHandler
             return true;
         }
 
-        if (!dispatcher.senderHasPermission())
-        {
+        if (!dispatcher.senderHasPermission()) {
             sender.sendMessage(TFM_Command.MSG_NO_PERMS);
             return true;
         }
 
-        try
-        {
+        try {
             return dispatcher.run(sender, playerSender, cmd, commandLabel, args, senderIsConsole);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe("Command Error: " + commandLabel);
             TFM_Log.severe(ex);
             sender.sendMessage(ChatColor.RED + "Command Error: " + ex.getMessage());

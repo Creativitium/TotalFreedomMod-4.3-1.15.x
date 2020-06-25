@@ -18,20 +18,18 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class TFM_ServiceChecker
-{
+public class TFM_ServiceChecker {
+
     public static final Map<String, ServiceStatus> services;
     private static URL url;
     private static String lastCheck;
     private static String version;
 
-    private TFM_ServiceChecker()
-    {
+    private TFM_ServiceChecker() {
         throw new AssertionError();
     }
 
-    static
-    {
+    static {
         lastCheck = "Unknown";
         version = "1.0-Mojang";
         services = new HashMap<String, ServiceStatus>();
@@ -44,21 +42,16 @@ public class TFM_ServiceChecker
         services.put("session.minecraft.net", new ServiceStatus("Minecraft Sessions (Legacy)"));
     }
 
-    public static void start()
-    {
+    public static void start() {
         final String serviceCheckerURL = TFM_ConfigEntry.SERVICE_CHECKER_URL.getString();
 
-        if (serviceCheckerURL == null || serviceCheckerURL.isEmpty())
-        {
+        if (serviceCheckerURL == null || serviceCheckerURL.isEmpty()) {
             return;
         }
 
-        try
-        {
+        try {
             url = new URL(serviceCheckerURL);
-        }
-        catch (MalformedURLException ex)
-        {
+        } catch (MalformedURLException ex) {
             TFM_Log.severe("Invalid ServiceChecker URL, disabling service checker");
             return;
         }
@@ -66,183 +59,145 @@ public class TFM_ServiceChecker
         getUpdateRunnable().runTaskTimerAsynchronously(TotalFreedomMod.plugin, 40L, TotalFreedomMod.SERVICE_CHECKER_RATE * 20L);
     }
 
-    public static BukkitRunnable getUpdateRunnable()
-    {
-        return new BukkitRunnable()
-        {
+    public static BukkitRunnable getUpdateRunnable() {
+        return new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                if (url == null)
-                {
+            public void run() {
+                if (url == null) {
                     return;
                 }
 
                 final JSONArray statusJson;
-                try
-                {
+                try {
                     final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
                     statusJson = (JSONArray) JSONValue.parse(in.readLine());
                     in.close();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     TFM_Log.severe("Error updating mojang services from " + url);
                     TFM_Log.severe(ex);
                     return;
                 }
 
                 final Iterator status = statusJson.iterator();
-                while (status.hasNext())
-                {
+                while (status.hasNext()) {
                     final Iterator serviceIt = ((JSONObject) status.next()).entrySet().iterator();
-                    while (serviceIt.hasNext())
-                    {
+                    while (serviceIt.hasNext()) {
                         @SuppressWarnings("unchecked")
                         final Entry<String, String> pair = (Entry<String, String>) serviceIt.next();
 
-                        if ("lastcheck".equals(pair.getKey()))
-                        {
+                        if ("lastcheck".equals(pair.getKey())) {
                             lastCheck = pair.getValue();
                             continue;
                         }
 
-                        if ("version".equals(pair.getKey()))
-                        {
+                        if ("version".equals(pair.getKey())) {
                             version = pair.getValue();
                             continue;
                         }
 
                         final ServiceStatus service = services.get(pair.getKey());
-                        if (service == null)
-                        {
+                        if (service == null) {
                             continue;
                         }
 
-                        if (pair.getValue().contains(":"))
-                        {
+                        if (pair.getValue().contains(":")) {
                             String[] statusString = pair.getValue().split(":");
                             service.setColor(statusString[0]);
                             service.setMessage(statusString[1]);
                             service.setUptime(statusString[2]);
-                        }
-                        else
-                        {
+                        } else {
                             service.setColor(pair.getValue());
                             service.setMessage(("red".equals(pair.getValue()) ? "Offline" : ("yellow".equals(pair.getValue()) ? "Problem" : "Online")));
                         }
                     }
                 }
-                if (lastCheck.equals("Unknown"))
-                {
+                if (lastCheck.equals("Unknown")) {
                     lastCheck = TFM_Util.dateToString(new Date());
                 }
             }
         };
     }
 
-    public static List<ServiceStatus> getAllStatuses()
-    {
+    public static List<ServiceStatus> getAllStatuses() {
         List<ServiceStatus> servicesList = new ArrayList<ServiceStatus>();
-        for (String key : services.keySet())
-        {
+        for (String key : services.keySet()) {
             servicesList.add(services.get(key));
         }
         return servicesList;
     }
 
-    public static String getLastCheck()
-    {
+    public static String getLastCheck() {
         return lastCheck;
     }
 
-    public static String getVersion()
-    {
+    public static String getVersion() {
         return version;
     }
 
-    public static class ServiceStatus
-    {
+    public static class ServiceStatus {
+
         private String name;
         private String uptime = "100.0"; // skins.minecraft.net, minecraft.net, etc..
         private ChatColor color = ChatColor.DARK_GREEN;
         private String message = "Online"; // Online, Offline, Quite Slow, 404 Error, 500 Error, etc..
 
-        public ServiceStatus(String name)
-        {
+        public ServiceStatus(String name) {
             this.name = name;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public String getUptime()
-        {
+        public String getUptime() {
             return uptime;
         }
 
-        public float getUptimeFloat()
-        {
+        public float getUptimeFloat() {
             return Float.parseFloat(uptime);
         }
 
-        public ChatColor getUptimeColor()
-        {
+        public ChatColor getUptimeColor() {
             return (getUptimeFloat() > 95 ? ChatColor.GREEN : (getUptimeFloat() > 90 ? ChatColor.GOLD : ChatColor.RED));
         }
 
-        public ChatColor getColor()
-        {
+        public ChatColor getColor() {
             return color;
         }
 
-        public String getMessage()
-        {
+        public String getMessage() {
             return message;
         }
 
-        public String getFormattedStatus()
-        {
+        public String getFormattedStatus() {
             String status = ChatColor.BLUE + "- " + ChatColor.GRAY + name + ChatColor.WHITE + ": " + color + message + ChatColor.WHITE;
 
-            if (!TFM_ServiceChecker.version.contains("Mojang"))
-            {
+            if (!TFM_ServiceChecker.version.contains("Mojang")) {
                 status += " (" + getUptimeColor() + getUptime() + ChatColor.WHITE + "%)";
             }
 
             return status;
         }
 
-        public void setUptime(String uptime)
-        {
+        public void setUptime(String uptime) {
             this.uptime = uptime;
         }
 
-        public void setColor(ChatColor color)
-        {
+        public void setColor(ChatColor color) {
             this.color = color;
         }
 
-        public void setColor(String color)
-        {
-            if ("green".equals(color))
-            {
+        public void setColor(String color) {
+            if ("green".equals(color)) {
                 this.color = ChatColor.DARK_GREEN;
-            }
-            else if ("yellow".equals(color))
-            {
+            } else if ("yellow".equals(color)) {
                 this.color = ChatColor.YELLOW;
-            }
-            else
-            {
+            } else {
                 this.color = ChatColor.RED;
             }
         }
 
-        public void setMessage(String message)
-        {
+        public void setMessage(String message) {
             this.message = message;
         }
     }

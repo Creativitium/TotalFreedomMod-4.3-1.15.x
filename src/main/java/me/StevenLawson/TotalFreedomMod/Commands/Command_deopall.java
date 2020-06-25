@@ -7,15 +7,13 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "Deop everyone on the server.", usage = "/<command>")
-public class Command_deopall extends TFM_Command
-{
+public class Command_deopall extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         TFM_Util.adminAction(sender.getName(), "De-opping all players on the server", true);
 
-        for (Player player : server.getOnlinePlayers())
-        {
+        for (Player player : server.getOnlinePlayers()) {
             player.setOp(false);
             player.sendMessage(TFM_Command.YOU_ARE_NOT_OP);
         }

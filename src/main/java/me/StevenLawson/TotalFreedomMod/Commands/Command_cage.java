@@ -11,18 +11,15 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "Place a cage around someone.", usage = "/<command> <purge | off | <partialname> [outermaterial] [innermaterial]>")
-public class Command_cage extends TFM_Command
-{
+public class Command_cage extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length == 0)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length == 0) {
             return false;
         }
 
-        if ("off".equals(args[0]) && sender instanceof Player)
-        {
+        if ("off".equals(args[0]) && sender instanceof Player) {
             TFM_Util.adminAction(sender.getName(), "Uncaging " + sender.getName(), true);
             TFM_PlayerData playerdata = TFM_PlayerData.getPlayerData(sender_p);
 
@@ -31,13 +28,10 @@ public class Command_cage extends TFM_Command
             playerdata.clearHistory();
 
             return true;
-        }
-        else if ("purge".equals(args[0]))
-        {
+        } else if ("purge".equals(args[0])) {
             TFM_Util.adminAction(sender.getName(), "Uncaging all players", true);
 
-            for (Player player : server.getOnlinePlayers())
-            {
+            for (Player player : server.getOnlinePlayers()) {
                 TFM_PlayerData playerdata = TFM_PlayerData.getPlayerData(player);
                 playerdata.setCaged(false);
                 playerdata.regenerateHistory();
@@ -49,8 +43,7 @@ public class Command_cage extends TFM_Command
 
         final Player player = getPlayer(args[0]);
 
-        if (player == null)
-        {
+        if (player == null) {
             sender.sendMessage(TFM_Command.PLAYER_NOT_FOUND);
             return true;
         }
@@ -60,10 +53,8 @@ public class Command_cage extends TFM_Command
         Material outerMaterial = Material.GLASS;
         Material innerMaterial = Material.AIR;
 
-        if (args.length >= 2)
-        {
-            if ("off".equals(args[1]))
-            {
+        if (args.length >= 2) {
+            if ("off".equals(args[1])) {
                 TFM_Util.adminAction(sender.getName(), "Uncaging " + player.getName(), true);
 
                 playerdata.setCaged(false);
@@ -71,28 +62,19 @@ public class Command_cage extends TFM_Command
                 playerdata.clearHistory();
 
                 return true;
-            }
-            else
-            {
-                if ("darth".equalsIgnoreCase(args[1]))
-                {
+            } else {
+                if ("darth".equalsIgnoreCase(args[1])) {
                     outerMaterial = Material.PLAYER_HEAD;
-                }
-                else if (Material.matchMaterial(args[1]) != null)
-                {
+                } else if (Material.matchMaterial(args[1]) != null) {
                     outerMaterial = Material.matchMaterial(args[1]);
                 }
             }
         }
 
-        if (args.length >= 3)
-        {
-            if (args[2].equalsIgnoreCase("water"))
-            {
+        if (args.length >= 3) {
+            if (args[2].equalsIgnoreCase("water")) {
                 innerMaterial = Material.WATER;
-            }
-            else if (args[2].equalsIgnoreCase("lava"))
-            {
+            } else if (args[2].equalsIgnoreCase("lava")) {
                 innerMaterial = Material.LAVA;
             }
         }
@@ -107,12 +89,9 @@ public class Command_cage extends TFM_Command
 
         player.setGameMode(GameMode.SURVIVAL);
 
-        if (outerMaterial != Material.PLAYER_HEAD)
-        {
+        if (outerMaterial != Material.PLAYER_HEAD) {
             TFM_Util.adminAction(sender.getName(), "Caging " + player.getName(), true);
-        }
-        else
-        {
+        } else {
             TFM_Util.adminAction(sender.getName(), "Caging " + player.getName() + " in PURE_DARTH", true);
         }
 

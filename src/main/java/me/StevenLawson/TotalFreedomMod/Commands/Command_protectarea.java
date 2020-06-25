@@ -11,75 +11,53 @@ import org.bukkit.entity.Player;
 @CommandParameters(
         description = "Protect areas so that only superadmins can directly modify blocks in those areas. WorldEdit and other such plugins might bypass this.",
         usage = "/<command> <list | clear | remove <label> | add <label> <radius>>")
-public class Command_protectarea extends TFM_Command
-{
+public class Command_protectarea extends TFM_Command {
 
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (!TFM_ConfigEntry.PROTECTAREA_ENABLED.getBoolean())
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (!TFM_ConfigEntry.PROTECTAREA_ENABLED.getBoolean()) {
             playerMsg("Protected areas are currently disabled in the TotalFreedomMod configuration.");
             return true;
         }
 
-        if (args.length == 1)
-        {
-            if (args[0].equalsIgnoreCase("list"))
-            {
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("list")) {
                 playerMsg("Protected Areas: " + StringUtils.join(TFM_ProtectedArea.getProtectedAreaLabels(), ", "));
-            }
-            else if (args[0].equalsIgnoreCase("clear"))
-            {
+            } else if (args[0].equalsIgnoreCase("clear")) {
                 TFM_ProtectedArea.clearProtectedAreas();
 
                 playerMsg("Protected Areas Cleared.");
-            }
-            else
-            {
+            } else {
                 return false;
             }
 
             return true;
-        }
-        else if (args.length == 2)
-        {
-            if ("remove".equals(args[0]))
-            {
+        } else if (args.length == 2) {
+            if ("remove".equals(args[0])) {
                 TFM_ProtectedArea.removeProtectedArea(args[1]);
 
                 playerMsg("Area removed. Protected Areas: " + StringUtils.join(TFM_ProtectedArea.getProtectedAreaLabels(), ", "));
-            }
-            else
-            {
+            } else {
                 return false;
             }
 
             return true;
-        }
-        else if (args.length == 3)
-        {
-            if (args[0].equalsIgnoreCase("add"))
-            {
-                if (senderIsConsole)
-                {
+        } else if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("add")) {
+                if (senderIsConsole) {
                     playerMsg("You must be in-game to set a protected area.");
                     return true;
                 }
 
                 Double radius;
-                try
-                {
+                try {
                     radius = Double.parseDouble(args[2]);
-                }
-                catch (NumberFormatException nfex)
-                {
+                } catch (NumberFormatException nfex) {
                     playerMsg("Invalid radius.");
                     return true;
                 }
 
-                if (radius > TFM_ProtectedArea.MAX_RADIUS || radius < 0.0D)
-                {
+                if (radius > TFM_ProtectedArea.MAX_RADIUS || radius < 0.0D) {
                     playerMsg("Invalid radius. Radius must be a positive value less than " + TFM_ProtectedArea.MAX_RADIUS + ".");
                     return true;
                 }
@@ -87,16 +65,12 @@ public class Command_protectarea extends TFM_Command
                 TFM_ProtectedArea.addProtectedArea(args[1], sender_p.getLocation(), radius);
 
                 playerMsg("Area added. Protected Areas: " + StringUtils.join(TFM_ProtectedArea.getProtectedAreaLabels(), ", "));
-            }
-            else
-            {
+            } else {
                 return false;
             }
 
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

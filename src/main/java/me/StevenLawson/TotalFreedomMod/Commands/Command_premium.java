@@ -13,35 +13,27 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "Validates if a given account is premium.", usage = "/<command> <player>", aliases = "prem")
-public class Command_premium extends TFM_Command
-{
+public class Command_premium extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
         final Player player = getPlayer(args[0]);
         final String name;
 
-        if (player != null)
-        {
+        if (player != null) {
             name = player.getName();
-        }
-        else
-        {
+        } else {
             name = args[0];
         }
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     final URL getUrl = new URL("https://minecraft.net/haspaid.jsp?user=" + name);
                     final URLConnection urlConnection = getUrl.openConnection();
                     // Read the response
@@ -49,18 +41,14 @@ public class Command_premium extends TFM_Command
                     final String message = ("false".equalsIgnoreCase(in.readLine()) ? ChatColor.RED + "No" : ChatColor.DARK_GREEN + "Yes");
                     in.close();
 
-                    new BukkitRunnable()
-                    {
+                    new BukkitRunnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             playerMsg("Player " + name + " is premium: " + message);
                         }
                     }.runTask(plugin);
 
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     TFM_Log.severe(ex);
                     playerMsg("There was an error querying the mojang server.", ChatColor.RED);
                 }

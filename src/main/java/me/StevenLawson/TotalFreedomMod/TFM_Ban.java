@@ -8,14 +8,13 @@ import java.util.regex.Pattern;
 import me.StevenLawson.TotalFreedomMod.Config.TFM_ConfigEntry;
 import org.bukkit.ChatColor;
 
-public class TFM_Ban
-{
+public class TFM_Ban {
+
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
     public static final Pattern IP_BAN_REGEX;
     public static final Pattern UUID_BAN_REGEX;
 
-    static
-    {
+    static {
         // 192.168.1.254:LocalHost:Prozza:0:none
         // 127.0.*.*:TestUserName:BannedByNotch:123567:Test reason
         IP_BAN_REGEX = Pattern.compile(
@@ -40,28 +39,23 @@ public class TFM_Ban
     private long expireUnix;
     private String reason;
 
-    public TFM_Ban(String ip, String lastLoginName)
-    {
+    public TFM_Ban(String ip, String lastLoginName) {
         this(ip, lastLoginName, null, null, null);
     }
 
-    public TFM_Ban(String ip, String lastLoginName, String sender, Date expire, String reason)
-    {
+    public TFM_Ban(String ip, String lastLoginName, String sender, Date expire, String reason) {
         this(ip, lastLoginName, sender, expire, reason, BanType.IP);
     }
 
-    public TFM_Ban(UUID uuid, String lastLoginName)
-    {
+    public TFM_Ban(UUID uuid, String lastLoginName) {
         this(uuid, lastLoginName, null, null, null);
     }
 
-    public TFM_Ban(UUID uuid, String lastLoginName, String sender, Date expire, String reason)
-    {
+    public TFM_Ban(UUID uuid, String lastLoginName, String sender, Date expire, String reason) {
         this(uuid.toString(), lastLoginName, sender, expire, reason, BanType.UUID);
     }
 
-    private TFM_Ban(String subject, String lastLoginName, String sender, Date expire, String reason, BanType type)
-    {
+    private TFM_Ban(String subject, String lastLoginName, String sender, Date expire, String reason, BanType type) {
         this.type = type;
         this.subject = subject;
         this.lastLoginName = (lastLoginName == null ? "none" : lastLoginName);
@@ -71,14 +65,12 @@ public class TFM_Ban
         complete = true;
     }
 
-    public TFM_Ban(String banString, BanType type)
-    {
+    public TFM_Ban(String banString, BanType type) {
         this.type = type;
 
         final Matcher matcher = (type == BanType.IP ? IP_BAN_REGEX.matcher(banString) : UUID_BAN_REGEX.matcher(banString));
 
-        if (!matcher.find())
-        {
+        if (!matcher.find()) {
             complete = false;
             return;
         }
@@ -91,66 +83,54 @@ public class TFM_Ban
         complete = true;
     }
 
-    public static enum BanType
-    {
+    public static enum BanType {
         IP,
         UUID;
     }
 
-    public BanType getType()
-    {
+    public BanType getType() {
         return type;
     }
 
-    public String getSubject()
-    {
+    public String getSubject() {
         return subject;
     }
 
-    public String getLastLoginName()
-    {
+    public String getLastLoginName() {
         return lastLoginName;
     }
 
-    public String getBannedBy()
-    {
+    public String getBannedBy() {
         return by;
     }
 
-    public long getExpireUnix()
-    {
+    public long getExpireUnix() {
         return expireUnix;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
-    public boolean isExpired()
-    {
+    public boolean isExpired() {
         return expireUnix != 0 && expireUnix < TFM_Util.getUnixTime();
     }
 
-    public boolean isComplete()
-    {
+    public boolean isComplete() {
         return complete;
     }
 
-    public String getKickMessage()
-    {
+    public String getKickMessage() {
         final StringBuilder message = new StringBuilder("You");
 
         message.append(type == BanType.IP ? "r IP address is" : " are").append(" temporarily banned from this server.");
         message.append("\nAppeal at ").append(ChatColor.GOLD).append(TFM_ConfigEntry.SERVER_BAN_URL.getString());
 
-        if (!reason.equals("none"))
-        {
+        if (!reason.equals("none")) {
             message.append("\nReason: ").append(reason);
         }
 
-        if (getExpireUnix() != 0)
-        {
+        if (getExpireUnix() != 0) {
             message.append("\nYour ban will be removed on ").append(DATE_FORMAT.format(TFM_Util.getUnixDate(expireUnix)));
         }
 
@@ -159,38 +139,31 @@ public class TFM_Ban
 
     // subject:lastLoginName:bannedBy:expireUnix:reason
     @Override
-    public String toString()
-    {
+    public String toString() {
         return subject + ":" + lastLoginName + ":" + by + ":" + expireUnix + ":" + TFM_Util.decolorize(reason);
     }
 
     @Override
-    public boolean equals(Object object)
-    {
-        if (object == null)
-        {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
 
-        if (!(object instanceof TFM_Ban))
-        {
+        if (!(object instanceof TFM_Ban)) {
             return false;
         }
 
         final TFM_Ban ban = (TFM_Ban) object;
 
-        if (toString().equals(ban.toString()))
-        {
+        if (toString().equals(ban.toString())) {
             return true;
         }
 
-        if (getType() != ban.getType())
-        {
+        if (getType() != ban.getType()) {
             return false;
         }
 
-        if (!getSubject().equals(ban.getSubject()))
-        {
+        if (!getSubject().equals(ban.getSubject())) {
             return false;
         }
 
@@ -198,8 +171,7 @@ public class TFM_Ban
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 37;
         int result = 1;
         result = prime * result + getType().hashCode();

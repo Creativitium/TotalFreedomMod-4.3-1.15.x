@@ -18,23 +18,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginIdentifiableCommand;
 
-public class Module_help extends TFM_HTTPD_Module
-{
-    public Module_help(NanoHTTPD.HTTPSession session)
-    {
+public class Module_help extends TFM_HTTPD_Module {
+
+    public Module_help(NanoHTTPD.HTTPSession session) {
         super(session);
     }
 
     @Override
-    public String getBody()
-    {
+    public String getBody() {
         StringBuilder responseBody = new StringBuilder();
 
         CommandMap commandMap;
         HashMap<String, Command> knownCommands;
         if ((commandMap = TFM_CommandLoader.getCommandMap()) == null
-                || (knownCommands = TFM_CommandLoader.getKnownCommands(commandMap)) == null)
-        {
+                || (knownCommands = TFM_CommandLoader.getKnownCommands(commandMap)) == null) {
             return paragraph("Error loading commands.");
         }
 
@@ -47,21 +44,17 @@ public class Module_help extends TFM_HTTPD_Module
         final Map<String, List<Command>> commandsByPlugin = new HashMap<String, List<Command>>();
 
         final Iterator<Map.Entry<String, Command>> itKnownCommands = knownCommands.entrySet().iterator();
-        while (itKnownCommands.hasNext())
-        {
+        while (itKnownCommands.hasNext()) {
             final Map.Entry<String, Command> entry = itKnownCommands.next();
             final String name = entry.getKey();
             final Command command = entry.getValue();
-            if (name.equalsIgnoreCase(command.getName()))
-            {
+            if (name.equalsIgnoreCase(command.getName())) {
                 String pluginName = "Bukkit Default";
-                if (command instanceof PluginIdentifiableCommand)
-                {
+                if (command instanceof PluginIdentifiableCommand) {
                     pluginName = ((PluginIdentifiableCommand) command).getPlugin().getName();
                 }
                 List<Command> pluginCommands = commandsByPlugin.get(pluginName);
-                if (pluginCommands == null)
-                {
+                if (pluginCommands == null) {
                     commandsByPlugin.put(pluginName, pluginCommands = new ArrayList<Command>());
                 }
                 pluginCommands.add(command);
@@ -69,19 +62,15 @@ public class Module_help extends TFM_HTTPD_Module
         }
 
         final Iterator<Map.Entry<String, List<Command>>> itCommandsByPlugin = commandsByPlugin.entrySet().iterator();
-        while (itCommandsByPlugin.hasNext())
-        {
+        while (itCommandsByPlugin.hasNext()) {
             final Map.Entry<String, List<Command>> entry = itCommandsByPlugin.next();
             final String pluginName = entry.getKey();
             final List<Command> commands = entry.getValue();
 
-            Collections.sort(commands, new Comparator<Command>()
-            {
+            Collections.sort(commands, new Comparator<Command>() {
                 @Override
-                public int compare(Command a, Command b)
-                {
-                    if (a instanceof TFM_DynamicCommand && b instanceof TFM_DynamicCommand)
-                    {
+                public int compare(Command a, Command b) {
+                    if (a instanceof TFM_DynamicCommand && b instanceof TFM_DynamicCommand) {
                         String aName = ((TFM_DynamicCommand) a).getCommandInfo().getLevel().name() + a.getName();
                         String bName = ((TFM_DynamicCommand) b).getCommandInfo().getLevel().name() + b.getName();
                         return aName.compareTo(bName);
@@ -93,13 +82,10 @@ public class Module_help extends TFM_HTTPD_Module
             responseBody.append(heading(pluginName, 2)).append("<ul>\r\n");
 
             AdminLevel lastTfmCommandLevel = null;
-            for (Command command : commands)
-            {
-                if ("TotalFreedomMod".equals(pluginName))
-                {
+            for (Command command : commands) {
+                if ("TotalFreedomMod".equals(pluginName)) {
                     AdminLevel tfmCommandLevel = ((TFM_DynamicCommand) command).getCommandInfo().getLevel();
-                    if (lastTfmCommandLevel == null || lastTfmCommandLevel != tfmCommandLevel)
-                    {
+                    if (lastTfmCommandLevel == null || lastTfmCommandLevel != tfmCommandLevel) {
                         responseBody.append("</ul>\r\n").append(heading(tfmCommandLevel.getFriendlyName(), 3)).append("<ul>\r\n");
                     }
                     lastTfmCommandLevel = tfmCommandLevel;
@@ -113,8 +99,7 @@ public class Module_help extends TFM_HTTPD_Module
         return responseBody.toString();
     }
 
-    private static String buildDescription(Command command)
-    {
+    private static String buildDescription(Command command) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(
@@ -122,8 +107,7 @@ public class Module_help extends TFM_HTTPD_Module
                         .replace("{$CMD_NAME}", escapeHtml4(command.getName().trim()))
                         .replace("{$CMD_USAGE}", escapeHtml4(command.getUsage().trim())));
 
-        if (!command.getAliases().isEmpty())
-        {
+        if (!command.getAliases().isEmpty()) {
             sb.append(
                     " - Aliases: <span class=\"commandAliases\">{$CMD_ALIASES}</span>"
                             .replace("{$CMD_ALIASES}", escapeHtml4(StringUtils.join(command.getAliases(), ", "))));
@@ -137,14 +121,12 @@ public class Module_help extends TFM_HTTPD_Module
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         return "TotalFreedomMod :: Command Help";
     }
 
     @Override
-    public String getStyle()
-    {
+    public String getStyle() {
         return ".commandName{font-weight:bold;}.commandDescription{padding-left:15px;}li{margin:.15em;padding:.15em;}";
     }
 //    @Override

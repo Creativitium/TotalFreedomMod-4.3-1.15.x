@@ -2,8 +2,7 @@ package me.StevenLawson.TotalFreedomMod.Config;
 
 import java.util.List;
 
-public enum TFM_ConfigEntry
-{
+public enum TFM_ConfigEntry {
     FORCE_IP_ENABLED(Boolean.class, "forceip.enabled"),
     FORCE_IP_PORT(Integer.class, "forceip.port"),
     FORCE_IP_KICKMSG(String.class, "forceip.kickmsg"),
@@ -89,78 +88,63 @@ public enum TFM_ConfigEntry
     private final Class<?> type;
     private final String configName;
 
-    private TFM_ConfigEntry(Class<?> type, String configName)
-    {
+    private TFM_ConfigEntry(Class<?> type, String configName) {
         this.type = type;
         this.configName = configName;
     }
 
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return type;
     }
 
-    public String getConfigName()
-    {
+    public String getConfigName() {
         return configName;
     }
 
-    public String getString()
-    {
+    public String getString() {
         return TFM_MainConfig.getString(this);
     }
 
-    public String setString(String value)
-    {
+    public String setString(String value) {
         TFM_MainConfig.setString(this, value);
         return value;
     }
 
-    public Double getDouble()
-    {
+    public Double getDouble() {
         return TFM_MainConfig.getDouble(this);
     }
 
-    public Double setDouble(Double value)
-    {
+    public Double setDouble(Double value) {
         TFM_MainConfig.setDouble(this, value);
         return value;
     }
 
-    public Boolean getBoolean()
-    {
+    public Boolean getBoolean() {
         return TFM_MainConfig.getBoolean(this);
     }
 
-    public Boolean setBoolean(Boolean value)
-    {
+    public Boolean setBoolean(Boolean value) {
         TFM_MainConfig.setBoolean(this, value);
         return value;
     }
 
-    public Integer getInteger()
-    {
+    public Integer getInteger() {
         return TFM_MainConfig.getInteger(this);
     }
 
-    public Integer setInteger(Integer value)
-    {
+    public Integer setInteger(Integer value) {
         TFM_MainConfig.setInteger(this, value);
         return value;
     }
 
-    public List<?> getList()
-    {
+    public List<?> getList() {
         return TFM_MainConfig.getList(this);
     }
 
-    public static TFM_ConfigEntry findConfigEntry(String name)
-    {
+    public static TFM_ConfigEntry findConfigEntry(String name) {
         name = name.toLowerCase().replace("_", "");
-        for (TFM_ConfigEntry entry : values())
-        {
-            if (entry.toString().toLowerCase().replace("_", "").equals(name))
-            {
+        for (TFM_ConfigEntry entry : values()) {
+            if (entry.toString().toLowerCase().replace("_", "").equals(name)) {
                 return entry;
             }
         }

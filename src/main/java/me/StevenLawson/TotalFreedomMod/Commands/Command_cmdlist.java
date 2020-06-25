@@ -14,31 +14,24 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 @CommandPermissions(level = AdminLevel.ALL, source = SourceType.BOTH)
 @CommandParameters(description = "Show all commands for all server plugins.", usage = "/<command>")
-public class Command_cmdlist extends TFM_Command
-{
+public class Command_cmdlist extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         List<String> commands = new ArrayList<String>();
 
-        for (Plugin targetPlugin : server.getPluginManager().getPlugins())
-        {
-            try
-            {
+        for (Plugin targetPlugin : server.getPluginManager().getPlugins()) {
+            try {
                 PluginDescriptionFile desc = targetPlugin.getDescription();
                 Map<String, Map<String, Object>> map = (Map<String, Map<String, Object>>) desc.getCommands();
 
-                if (map != null)
-                {
-                    for (Entry<String, Map<String, Object>> entry : map.entrySet())
-                    {
+                if (map != null) {
+                    for (Entry<String, Map<String, Object>> entry : map.entrySet()) {
                         String command_name = (String) entry.getKey();
                         commands.add(command_name);
                     }
                 }
-            }
-            catch (Throwable ex)
-            {
+            } catch (Throwable ex) {
             }
         }
 

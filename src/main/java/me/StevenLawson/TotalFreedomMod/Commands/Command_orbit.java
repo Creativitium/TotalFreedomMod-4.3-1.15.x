@@ -12,20 +12,17 @@ import org.bukkit.util.Vector;
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "POW!!! Right in the kisser! One of these days Alice, straight to the Moon!",
         usage = "/<command> <target> [<<power> | stop>]")
-public class Command_orbit extends TFM_Command
-{
+public class Command_orbit extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length == 0)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length == 0) {
             return false;
         }
 
         Player player = getPlayer(args[0]);
 
-        if (player == null)
-        {
+        if (player == null) {
             playerMsg(TFM_Command.PLAYER_NOT_FOUND, ChatColor.RED);
             return true;
         }
@@ -34,21 +31,16 @@ public class Command_orbit extends TFM_Command
 
         double strength = 10.0;
 
-        if (args.length >= 2)
-        {
-            if (args[1].equals("stop"))
-            {
+        if (args.length >= 2) {
+            if (args[1].equals("stop")) {
                 playerMsg("Stopped orbiting " + player.getName());
                 playerdata.stopOrbiting();
                 return true;
             }
 
-            try
-            {
+            try {
                 strength = Math.max(1.0, Math.min(150.0, Double.parseDouble(args[1])));
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 playerMsg(ex.getMessage(), ChatColor.RED);
                 return true;
             }

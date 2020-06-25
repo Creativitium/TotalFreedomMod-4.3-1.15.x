@@ -8,13 +8,11 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.SENIOR, source = SourceType.ONLY_CONSOLE)
 @CommandParameters(description = "Removes essentials playerdata", usage = "/<command>")
-public class Command_wipeuserdata extends TFM_Command
-{
+public class Command_wipeuserdata extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (!server.getPluginManager().isPluginEnabled("Essentials"))
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (!server.getPluginManager().isPluginEnabled("Essentials")) {
             playerMsg("Essentials is not enabled on this server");
             return true;
         }

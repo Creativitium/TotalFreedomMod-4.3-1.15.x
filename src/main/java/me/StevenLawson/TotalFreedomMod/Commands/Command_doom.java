@@ -15,20 +15,17 @@ import org.bukkit.util.Vector;
 
 @CommandPermissions(level = AdminLevel.SENIOR, source = SourceType.ONLY_CONSOLE)
 @CommandParameters(description = "For the bad Superadmins", usage = "/<command> <playername>")
-public class Command_doom extends TFM_Command
-{
+public class Command_doom extends TFM_Command {
+
     @Override
-    public boolean run(final CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(final CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
         final Player player = getPlayer(args[0]);
 
-        if (player == null)
-        {
+        if (player == null) {
             sender.sendMessage(TFM_Command.PLAYER_NOT_FOUND);
             return true;
         }
@@ -39,8 +36,7 @@ public class Command_doom extends TFM_Command
         final String ip = player.getAddress().getAddress().getHostAddress().trim();
 
         // remove from superadmin
-        if (TFM_AdminList.isSuperAdmin(player))
-        {
+        if (TFM_AdminList.isSuperAdmin(player)) {
             TFM_Util.adminAction(sender.getName(), "Removing " + player.getName() + " from the superadmin list.", true);
             TFM_AdminList.removeSuperadmin(player);
         }
@@ -52,8 +48,7 @@ public class Command_doom extends TFM_Command
         player.setOp(false);
 
         // ban IPs
-        for (String playerIp : TFM_PlayerList.getEntry(player).getIps())
-        {
+        for (String playerIp : TFM_PlayerList.getEntry(player).getIps()) {
             TFM_BanManager.addIpBan(new TFM_Ban(playerIp, player.getName()));
         }
 
@@ -76,11 +71,9 @@ public class Command_doom extends TFM_Command
         // Shoot the player in the sky
         player.setVelocity(player.getVelocity().clone().add(new Vector(0, 20, 0)));
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // strike lightning
                 player.getWorld().strikeLightning(player.getLocation());
 
@@ -89,11 +82,9 @@ public class Command_doom extends TFM_Command
             }
         }.runTaskLater(plugin, 2L * 20L);
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // message
                 TFM_Util.adminAction(sender.getName(), "Banning " + player.getName() + ", IP: " + ip, true);
 

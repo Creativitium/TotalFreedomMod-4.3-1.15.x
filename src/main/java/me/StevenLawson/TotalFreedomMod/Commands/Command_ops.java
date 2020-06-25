@@ -9,25 +9,20 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.BOTH)
 @CommandParameters(description = "Manager operators", usage = "/<command> <count | purge>")
-public class Command_ops extends TFM_Command
-{
+public class Command_ops extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
-        if (args[0].equals("count"))
-        {
+        if (args[0].equals("count")) {
             int totalOps = server.getOperators().size();
             int onlineOps = 0;
 
-            for (Player player : server.getOnlinePlayers())
-            {
-                if (player.isOp())
-                {
+            for (Player player : server.getOnlinePlayers()) {
+                if (player.isOp()) {
                     onlineOps++;
                 }
             }
@@ -39,21 +34,17 @@ public class Command_ops extends TFM_Command
             return true;
         }
 
-        if (args[0].equals("purge"))
-        {
-            if (!TFM_AdminList.isSuperAdmin(sender))
-            {
+        if (args[0].equals("purge")) {
+            if (!TFM_AdminList.isSuperAdmin(sender)) {
                 playerMsg(TFM_Command.MSG_NO_PERMS);
                 return true;
             }
 
             TFM_Util.adminAction(sender.getName(), "Purging all operators", true);
 
-            for (OfflinePlayer player : server.getOperators())
-            {
+            for (OfflinePlayer player : server.getOperators()) {
                 player.setOp(false);
-                if (player.isOnline())
-                {
+                if (player.isOnline()) {
                     playerMsg(player.getPlayer(), TFM_Command.YOU_ARE_NOT_OP);
                 }
             }

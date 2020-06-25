@@ -15,8 +15,7 @@ import org.bukkit.plugin.Plugin;
  * @author -_Husky_-
  * @author tips48
  */
-public class MySQL extends Database
-{
+public class MySQL extends Database {
 
     private final String user;
     private final String database;
@@ -36,8 +35,7 @@ public class MySQL extends Database
      * @param username Username
      * @param password Password
      */
-    public MySQL(Plugin plugin, String hostname, String port, String database, String username, String password)
-    {
+    public MySQL(Plugin plugin, String hostname, String port, String database, String username, String password) {
         super(plugin);
         this.hostname = hostname;
         this.port = port;
@@ -48,85 +46,62 @@ public class MySQL extends Database
     }
 
     @Override
-    public Connection openConnection()
-    {
-        try
-        {
+    public Connection openConnection() {
+        try {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database, this.user, this.password);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not connect to MySQL server! because: " + e.getMessage());
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             plugin.getLogger().log(Level.SEVERE, "JDBC Driver not found!");
         }
         return connection;
     }
 
     @Override
-    public boolean checkConnection()
-    {
+    public boolean checkConnection() {
         return connection != null;
     }
 
     @Override
-    public Connection getConnection()
-    {
+    public Connection getConnection() {
         return connection;
     }
 
     @Override
-    public void closeConnection()
-    {
-        if (connection != null)
-        {
-            try
-            {
+    public void closeConnection() {
+        if (connection != null) {
+            try {
                 connection.close();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 plugin.getLogger().log(Level.SEVERE, "Error closing the MySQL Connection!");
                 e.printStackTrace();
             }
         }
     }
 
-    public ResultSet querySQL(String query)
-    {
+    public ResultSet querySQL(String query) {
         Connection c = null;
 
-        if (checkConnection())
-        {
+        if (checkConnection()) {
             c = getConnection();
-        }
-        else
-        {
+        } else {
             c = openConnection();
         }
 
         Statement s = null;
 
-        try
-        {
+        try {
             s = c.createStatement();
-        }
-        catch (SQLException e1)
-        {
+        } catch (SQLException e1) {
             e1.printStackTrace();
         }
 
         ResultSet ret = null;
 
-        try
-        {
+        try {
             ret = s.executeQuery(query);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -135,29 +110,22 @@ public class MySQL extends Database
         return ret;
     }
 
-    public void updateSQL(String update)
-    {
+    public void updateSQL(String update) {
 
         Connection c = null;
 
-        if (checkConnection())
-        {
+        if (checkConnection()) {
             c = getConnection();
-        }
-        else
-        {
+        } else {
             c = openConnection();
         }
 
         Statement s = null;
 
-        try
-        {
+        try {
             s = c.createStatement();
             s.executeUpdate(update);
-        }
-        catch (SQLException e1)
-        {
+        } catch (SQLException e1) {
             e1.printStackTrace();
         }
 

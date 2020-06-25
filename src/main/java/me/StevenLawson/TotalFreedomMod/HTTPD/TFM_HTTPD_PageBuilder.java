@@ -2,8 +2,8 @@ package me.StevenLawson.TotalFreedomMod.HTTPD;
 
 import me.StevenLawson.TotalFreedomMod.HTTPD.NanoHTTPD.Response;
 
-public class TFM_HTTPD_PageBuilder
-{
+public class TFM_HTTPD_PageBuilder {
+
     private static final String TEMPLATE = "<!DOCTYPE html>\r\n"
             + "<html>\r\n"
             + "<head>\r\n"
@@ -24,46 +24,38 @@ public class TFM_HTTPD_PageBuilder
     private String style = null;
     private String script = null;
 
-    public TFM_HTTPD_PageBuilder()
-    {
+    public TFM_HTTPD_PageBuilder() {
     }
 
-    public TFM_HTTPD_PageBuilder(String body, String title, String style, String script)
-    {
+    public TFM_HTTPD_PageBuilder(String body, String title, String style, String script) {
         this.body = body;
         this.title = title;
         this.style = style;
         this.script = script;
     }
 
-    public void setBody(String body)
-    {
+    public void setBody(String body) {
         this.body = body;
     }
 
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setStyle(String style)
-    {
+    public void setStyle(String style) {
         this.style = style;
     }
 
-    public void setScript(String script)
-    {
+    public void setScript(String script) {
         this.script = script;
     }
 
-    public Response getResponse()
-    {
+    public Response getResponse() {
         return new Response(this.toString());
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return TEMPLATE
                 .replace("{$BODY}", this.body == null ? "" : this.body)
                 .replace("{$TITLE}", this.title == null ? "" : this.title)

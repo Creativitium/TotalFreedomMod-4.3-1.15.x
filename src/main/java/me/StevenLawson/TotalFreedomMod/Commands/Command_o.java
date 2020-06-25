@@ -12,15 +12,12 @@ import org.bukkit.entity.Player;
         description = "AdminChat - Talk privately with other admins. Using <command> itself will toggle AdminChat on and off for all messages.",
         usage = "/<command> [message...]",
         aliases = "adminchat")
-public class Command_o extends TFM_Command
-{
+public class Command_o extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length == 0)
-        {
-            if (senderIsConsole)
-            {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length == 0) {
+            if (senderIsConsole) {
                 playerMsg("Only in-game players can toggle AdminChat.");
                 return true;
             }
@@ -28,9 +25,7 @@ public class Command_o extends TFM_Command
             TFM_PlayerData userinfo = TFM_PlayerData.getPlayerData(sender_p);
             userinfo.setAdminChat(!userinfo.inAdminChat());
             playerMsg("Toggled Admin Chat " + (userinfo.inAdminChat() ? "on" : "off") + ".");
-        }
-        else
-        {
+        } else {
             TFM_Util.adminChatMessage(sender, StringUtils.join(args, " "), senderIsConsole);
         }
 

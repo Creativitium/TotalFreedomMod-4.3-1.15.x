@@ -10,8 +10,7 @@ import org.bukkit.plugin.Plugin;
  * @author -_Husky_-
  * @author tips48
  */
-public abstract class Database
-{
+public abstract class Database {
 
     /**
      * Plugin instance, use for plugin.getDataFolder() and plugin.getLogger()
@@ -23,8 +22,7 @@ public abstract class Database
      *
      * @param plugin Plugin instance
      */
-    protected Database(Plugin plugin)
-    {
+    protected Database(Plugin plugin) {
         this.plugin = plugin;
     }
 

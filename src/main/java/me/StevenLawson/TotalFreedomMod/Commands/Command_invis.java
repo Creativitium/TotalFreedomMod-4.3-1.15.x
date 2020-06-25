@@ -12,21 +12,16 @@ import org.bukkit.potion.PotionEffectType;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "Shows (optionally smites) invisisible players", usage = "/<command> (smite)")
-public class Command_invis extends TFM_Command
-{
+public class Command_invis extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         boolean smite = false;
-        if (args.length >= 1)
-        {
-            if (args[0].equalsIgnoreCase("smite"))
-            {
+        if (args.length >= 1) {
+            if (args[0].equalsIgnoreCase("smite")) {
                 TFM_Util.adminAction(sender.getName(), "Smiting all invisible players", true);
                 smite = true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
@@ -34,31 +29,24 @@ public class Command_invis extends TFM_Command
         List<String> players = new ArrayList<String>();
         int smites = 0;
 
-        for (Player player : server.getOnlinePlayers())
-        {
-            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
-            {
+        for (Player player : server.getOnlinePlayers()) {
+            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 players.add(player.getName());
-                if (smite && !TFM_AdminList.isSuperAdmin(player))
-                {
+                if (smite && !TFM_AdminList.isSuperAdmin(player)) {
                     player.setHealth(0.0);
                     smites++;
                 }
             }
         }
 
-        if (players.isEmpty())
-        {
+        if (players.isEmpty()) {
             playerMsg("There are no invisible players");
             return true;
         }
 
-        if (smite)
-        {
+        if (smite) {
             playerMsg("Smitten " + smites + " players");
-        }
-        else
-        {
+        } else {
             playerMsg("Invisble players (" + players.size() + "): " + StringUtils.join(players, ", "));
         }
 

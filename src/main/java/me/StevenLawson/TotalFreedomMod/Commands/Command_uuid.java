@@ -17,49 +17,40 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.SENIOR, source = SourceType.ONLY_CONSOLE)
 @CommandParameters(description = "Provides uuid tools", usage = "/<command> <purge | recalculate>")
-public class Command_uuid extends TFM_Command
-{
+public class Command_uuid extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
-        if ("purge".equals(args[0]))
-        {
+        if ("purge".equals(args[0])) {
             playerMsg("Purged " + TFM_UuidManager.purge() + " cached UUIDs.");
             return true;
         }
 
-        if ("recalculate".equals(args[0]))
-        {
+        if ("recalculate".equals(args[0])) {
             playerMsg("Recalculating UUIDs...");
 
             // Playerlist uuids
             final Set<TFM_Player> players = TFM_PlayerList.getAllPlayers();
             final List<String> names = new ArrayList<String>();
 
-            for (TFM_Player player : players)
-            {
+            for (TFM_Player player : players) {
                 names.add(player.getLastLoginName());
             }
 
             final Map<String, UUID> playerUuids = new TFM_UuidResolver(names).call();
 
             int updated = 0;
-            for (String name : playerUuids.keySet())
-            {
-                for (TFM_Player player : players)
-                {
-                    if (!player.getLastLoginName().equalsIgnoreCase(name))
-                    {
+            for (String name : playerUuids.keySet()) {
+                for (TFM_Player player : players) {
+                    if (!player.getLastLoginName().equalsIgnoreCase(name)) {
                         continue;
                     }
 
-                    if (player.getUniqueId().equals(playerUuids.get(name)))
-                    {
+                    if (player.getUniqueId().equals(playerUuids.get(name))) {
                         continue;
                     }
 
@@ -75,25 +66,20 @@ public class Command_uuid extends TFM_Command
 
             // Adminlist UUIDs
             final Set<TFM_Admin> admins = TFM_AdminList.getAllAdmins();
-            for (TFM_Admin admin : admins)
-            {
+            for (TFM_Admin admin : admins) {
                 names.add(admin.getLastLoginName());
             }
 
             final Map<String, UUID> adminUuids = new TFM_UuidResolver(names).call();
 
             updated = 0;
-            for (String name : adminUuids.keySet())
-            {
-                for (TFM_Admin admin : admins)
-                {
-                    if (!admin.getLastLoginName().equalsIgnoreCase(name))
-                    {
+            for (String name : adminUuids.keySet()) {
+                for (TFM_Admin admin : admins) {
+                    if (!admin.getLastLoginName().equalsIgnoreCase(name)) {
                         continue;
                     }
 
-                    if (admin.getUniqueId().equals(adminUuids.get(name)))
-                    {
+                    if (admin.getUniqueId().equals(adminUuids.get(name))) {
                         continue;
                     }
 

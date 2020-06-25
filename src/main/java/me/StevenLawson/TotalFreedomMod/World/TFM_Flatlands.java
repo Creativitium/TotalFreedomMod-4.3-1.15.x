@@ -15,20 +15,17 @@ import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-public class TFM_Flatlands extends TFM_CustomWorld
-{
+public class TFM_Flatlands extends TFM_CustomWorld {
+
     private static final String GENERATION_PARAMETERS = TFM_ConfigEntry.FLATLANDS_GENERATE_PARAMS.getString();
     private static final String WORLD_NAME = "flatlands";
 
-    private TFM_Flatlands()
-    {
+    private TFM_Flatlands() {
     }
 
     @Override
-    protected World generateWorld()
-    {
-        if (!TFM_ConfigEntry.FLATLANDS_GENERATE.getBoolean())
-        {
+    protected World generateWorld() {
+        if (!TFM_ConfigEntry.FLATLANDS_GENERATE.getBoolean()) {
             return null;
         }
 
@@ -63,39 +60,30 @@ public class TFM_Flatlands extends TFM_CustomWorld
         return world;
     }
 
-    public static void wipeFlatlandsIfFlagged()
-    {
+    public static void wipeFlatlandsIfFlagged() {
         boolean doFlatlandsWipe = false;
-        try
-        {
+        try {
             doFlatlandsWipe = TFM_Util.getSavedFlag("do_wipe_flatlands");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
         }
 
-        if (doFlatlandsWipe)
-        {
-            if (Bukkit.getServer().getWorld("flatlands") == null)
-            {
+        if (doFlatlandsWipe) {
+            if (Bukkit.getServer().getWorld("flatlands") == null) {
                 TFM_Log.info("Wiping flatlands.");
                 TFM_Util.setSavedFlag("do_wipe_flatlands", false);
                 FileUtils.deleteQuietly(new File("./flatlands"));
-            }
-            else
-            {
+            } else {
                 TFM_Log.severe("Can't wipe flatlands, it is already loaded.");
             }
         }
     }
 
-    public static TFM_Flatlands getInstance()
-    {
+    public static TFM_Flatlands getInstance() {
         return TFM_FlatlandsHolder.INSTANCE;
     }
 
-    private static class TFM_FlatlandsHolder
-    {
+    private static class TFM_FlatlandsHolder {
+
         private static final TFM_Flatlands INSTANCE = new TFM_Flatlands();
     }
 }

@@ -15,63 +15,52 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.BOTH)
 @CommandParameters(description = "NickFilter: Prefix any command with this command to replace nicknames in that command with real names. Nicknames should be prefixed with a !.", usage = "/<command> <other_command> !<playernick>")
-public class Command_nf extends TFM_Command
-{
+public class Command_nf extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         boolean nickMatched = false;
 
         final List<String> outputCommand = new ArrayList<String>();
 
-        if (args.length >= 1)
-        {
+        if (args.length >= 1) {
             final List<String> argsList = Arrays.asList(args);
-            for (String arg : argsList)
-            {
+            for (String arg : argsList) {
                 Player player = null;
 
                 Matcher matcher = Pattern.compile("^!(.+)$").matcher(arg);
-                if (matcher.find())
-                {
+                if (matcher.find()) {
                     String displayName = matcher.group(1);
 
                     player = getPlayerByDisplayName(displayName);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         player = getPlayerByDisplayNameAlt(displayName);
 
-                        if (player == null)
-                        {
+                        if (player == null) {
                             sender.sendMessage(ChatColor.GRAY + "Can't find player by nickname: " + displayName);
                             return true;
                         }
                     }
                 }
 
-                if (player == null)
-                {
+                if (player == null) {
                     outputCommand.add(arg);
-                }
-                else
-                {
+                } else {
                     nickMatched = true;
                     outputCommand.add(player.getName());
                 }
             }
         }
 
-        if (!nickMatched)
-        {
+        if (!nickMatched) {
             sender.sendMessage("No nicknames replaced in command.");
             return true;
         }
 
         String newCommand = StringUtils.join(outputCommand, " ");
 
-        if (TFM_CommandBlocker.isCommandBlocked(newCommand, sender))
-        {
+        if (TFM_CommandBlocker.isCommandBlocked(newCommand, sender)) {
             // CommandBlocker handles messages and broadcasts
             return true;
         }
@@ -82,14 +71,11 @@ public class Command_nf extends TFM_Command
         return true;
     }
 
-    private static Player getPlayerByDisplayName(String needle)
-    {
+    private static Player getPlayerByDisplayName(String needle) {
         needle = needle.toLowerCase().trim();
 
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            if (player.getDisplayName().toLowerCase().trim().contains(needle))
-            {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getDisplayName().toLowerCase().trim().contains(needle)) {
                 return player;
             }
         }
@@ -97,19 +83,16 @@ public class Command_nf extends TFM_Command
         return null;
     }
 
-    private static Player getPlayerByDisplayNameAlt(String needle)
-    {
+    private static Player getPlayerByDisplayNameAlt(String needle) {
         needle = needle.toLowerCase().trim();
 
         Integer minEditDistance = null;
         Player minEditMatch = null;
 
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             String haystack = player.getDisplayName().toLowerCase().trim();
             int editDistance = StringUtils.getLevenshteinDistance(needle, haystack.toLowerCase());
-            if (minEditDistance == null || minEditDistance.intValue() > editDistance)
-            {
+            if (minEditDistance == null || minEditDistance.intValue() > editDistance) {
                 minEditDistance = editDistance;
                 minEditMatch = player;
             }

@@ -8,8 +8,8 @@ import me.StevenLawson.TotalFreedomMod.HTTPD.NanoHTTPD.Method;
 import me.StevenLawson.TotalFreedomMod.HTTPD.NanoHTTPD.Response;
 import me.StevenLawson.TotalFreedomMod.TFM_Log;
 
-public abstract class TFM_HTTPD_Module
-{
+public abstract class TFM_HTTPD_Module {
+
     protected final String uri;
     protected final Method method;
     protected final Map<String, String> headers;
@@ -17,8 +17,7 @@ public abstract class TFM_HTTPD_Module
     protected final Socket socket;
     protected final HTTPSession session;
 
-    public TFM_HTTPD_Module(HTTPSession session)
-    {
+    public TFM_HTTPD_Module(HTTPSession session) {
         this.uri = session.getUri();
         this.method = session.getMethod();
         this.headers = session.getHeaders();
@@ -27,41 +26,32 @@ public abstract class TFM_HTTPD_Module
         this.session = session;
     }
 
-    public String getBody()
-    {
+    public String getBody() {
         return null;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return null;
     }
 
-    public String getStyle()
-    {
+    public String getStyle() {
         return null;
     }
 
-    public String getScript()
-    {
+    public String getScript() {
         return null;
     }
 
-    public Response getResponse()
-    {
+    public Response getResponse() {
         return new TFM_HTTPD_PageBuilder(getBody(), getTitle(), getStyle(), getScript()).getResponse();
     }
 
-    protected final Map<String, String> getFiles()
-    {
+    protected final Map<String, String> getFiles() {
         Map<String, String> files = new HashMap<String, String>();
 
-        try
-        {
+        try {
             session.parseBody(files);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
 

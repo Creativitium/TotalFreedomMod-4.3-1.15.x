@@ -12,38 +12,32 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TFM_CommandBlocker
-{
+public class TFM_CommandBlocker {
+
     private static final Map<String, CommandBlockerEntry> BLOCKED_COMMANDS;
 
-    static
-    {
+    static {
         BLOCKED_COMMANDS = new HashMap<String, CommandBlockerEntry>();
     }
 
-    private TFM_CommandBlocker()
-    {
+    private TFM_CommandBlocker() {
         throw new AssertionError();
     }
 
-    public static void load()
-    {
+    public static void load() {
         BLOCKED_COMMANDS.clear();
 
         final CommandMap commandMap = TFM_CommandLoader.getCommandMap();
-        if (commandMap == null)
-        {
+        if (commandMap == null) {
             TFM_Log.severe("Error loading commandMap.");
             return;
         }
 
         @SuppressWarnings("unchecked")
         List<String> blockedCommands = (List<String>) TFM_ConfigEntry.BLOCKED_COMMANDS.getList();
-        for (String rawEntry : blockedCommands)
-        {
+        for (String rawEntry : blockedCommands) {
             final String[] parts = rawEntry.split(":");
-            if (parts.length < 3 || parts.length > 4)
-            {
+            if (parts.length < 3 || parts.length > 4) {
                 TFM_Log.warning("Invalid command blocker entry: " + rawEntry);
                 continue;
             }
@@ -53,16 +47,14 @@ public class TFM_CommandBlocker
             String commandName = parts[2].toLowerCase().substring(1);
             final String message = (parts.length > 3 ? parts[3] : null);
 
-            if (rank == null || action == null || commandName == null || commandName.isEmpty())
-            {
+            if (rank == null || action == null || commandName == null || commandName.isEmpty()) {
                 TFM_Log.warning("Invalid command blocker entry: " + rawEntry);
                 continue;
             }
 
             final String[] commandParts = commandName.split(" ");
             String subCommand = null;
-            if (commandParts.length > 1)
-            {
+            if (commandParts.length > 1) {
                 commandName = commandParts[0];
                 subCommand = StringUtils.join(commandParts, " ", 1, commandParts.length).trim().toLowerCase();
             }
@@ -70,17 +62,13 @@ public class TFM_CommandBlocker
             final Command command = commandMap.getCommand(commandName);
 
             // Obtain command from alias
-            if (command == null)
-            {
+            if (command == null) {
                 TFM_Log.info("Blocking unknown command: /" + commandName);
-            }
-            else
-            {
+            } else {
                 commandName = command.getName().toLowerCase();
             }
 
-            if (BLOCKED_COMMANDS.containsKey(commandName))
-            {
+            if (BLOCKED_COMMANDS.containsKey(commandName)) {
                 TFM_Log.warning("Not blocking: /" + commandName + " - Duplicate entry exists!");
                 continue;
             }
@@ -88,10 +76,8 @@ public class TFM_CommandBlocker
             final CommandBlockerEntry blockedCommandEntry = new CommandBlockerEntry(rank, action, commandName, subCommand, message);
             BLOCKED_COMMANDS.put(blockedCommandEntry.getCommand(), blockedCommandEntry);
 
-            if (command != null)
-            {
-                for (String alias : command.getAliases())
-                {
+            if (command != null) {
+                for (String alias : command.getAliases()) {
                     BLOCKED_COMMANDS.put(alias.toLowerCase(), blockedCommandEntry);
                 }
             }
@@ -100,68 +86,56 @@ public class TFM_CommandBlocker
         TFM_Log.info("Loaded " + BLOCKED_COMMANDS.size() + " blocked commands");
     }
 
-    public static boolean isCommandBlocked(String command, CommandSender sender)
-    {
+    public static boolean isCommandBlocked(String command, CommandSender sender) {
         return isCommandBlocked(command, sender, false);
     }
 
-    public static boolean isCommandBlocked(String command, CommandSender sender, boolean doAction)
-    {
-        if (command == null || command.isEmpty())
-        {
+    public static boolean isCommandBlocked(String command, CommandSender sender, boolean doAction) {
+        if (command == null || command.isEmpty()) {
             return false;
         }
 
         command = command.toLowerCase().trim();
 
-        if (command.split(" ")[0].contains(":"))
-        {
+        if (command.split(" ")[0].contains(":")) {
             TFM_Util.playerMsg(sender, "Plugin-specific commands are disabled.");
             return true;
         }
 
-        if (command.startsWith("/"))
-        {
+        if (command.startsWith("/")) {
             command = command.substring(1);
         }
 
         final String[] commandParts = command.split(" ");
         String subCommand = null;
-        if (commandParts.length > 1)
-        {
+        if (commandParts.length > 1) {
             subCommand = StringUtils.join(commandParts, " ", 1, commandParts.length).toLowerCase();
         }
 
         final CommandBlockerEntry entry = BLOCKED_COMMANDS.get(commandParts[0]);
 
-        if (entry == null)
-        {
+        if (entry == null) {
             return false;
         }
 
-        if (entry.getSubCommand() != null)
-        {
-            if (subCommand == null || !subCommand.startsWith(entry.getSubCommand()))
-            {
+        if (entry.getSubCommand() != null) {
+            if (subCommand == null || !subCommand.startsWith(entry.getSubCommand())) {
                 return false;
             }
         }
 
-        if (entry.getRank().hasPermission(sender))
-        {
+        if (entry.getRank().hasPermission(sender)) {
             return false;
         }
 
-        if (doAction)
-        {
+        if (doAction) {
             entry.doActions(sender);
         }
 
         return true;
     }
 
-    public static enum CommandBlockerRank
-    {
+    public static enum CommandBlockerRank {
         ANYONE("a", 0),
         OP("o", 1),
         SUPER("s", 2),
@@ -172,40 +146,32 @@ public class TFM_CommandBlocker
         private final String token;
         private final int level;
 
-        private CommandBlockerRank(String token, int level)
-        {
+        private CommandBlockerRank(String token, int level) {
             this.token = token;
             this.level = level;
         }
 
-        public String getToken()
-        {
+        public String getToken() {
             return this.token;
         }
 
-        public boolean hasPermission(CommandSender sender)
-        {
+        public boolean hasPermission(CommandSender sender) {
             return fromSender(sender).level >= this.level;
         }
 
-        public static CommandBlockerRank fromSender(CommandSender sender)
-        {
-            if (!(sender instanceof Player))
-            {
+        public static CommandBlockerRank fromSender(CommandSender sender) {
+            if (!(sender instanceof Player)) {
                 return TELNET;
             }
 
-            if (TFM_AdminList.isSuperAdmin(sender))
-            {
-                if (TFM_AdminList.isSeniorAdmin(sender))
-                {
+            if (TFM_AdminList.isSuperAdmin(sender)) {
+                if (TFM_AdminList.isSeniorAdmin(sender)) {
                     return SENIOR;
                 }
                 return SUPER;
             }
 
-            if (sender.isOp())
-            {
+            if (sender.isOp()) {
                 return OP;
             }
 
@@ -213,12 +179,9 @@ public class TFM_CommandBlocker
 
         }
 
-        public static CommandBlockerRank fromToken(String token)
-        {
-            for (CommandBlockerRank rank : CommandBlockerRank.values())
-            {
-                if (rank.getToken().equalsIgnoreCase(token))
-                {
+        public static CommandBlockerRank fromToken(String token) {
+            for (CommandBlockerRank rank : CommandBlockerRank.values()) {
+                if (rank.getToken().equalsIgnoreCase(token)) {
                     return rank;
                 }
             }
@@ -226,29 +189,23 @@ public class TFM_CommandBlocker
         }
     }
 
-    public static enum CommandBlockerAction
-    {
+    public static enum CommandBlockerAction {
         BLOCK("b"),
         BLOCK_AND_EJECT("a"),
         BLOCK_UNKNOWN("u");
         private final String token;
 
-        private CommandBlockerAction(String token)
-        {
+        private CommandBlockerAction(String token) {
             this.token = token;
         }
 
-        public String getToken()
-        {
+        public String getToken() {
             return this.token;
         }
 
-        public static CommandBlockerAction fromToken(String token)
-        {
-            for (CommandBlockerAction action : CommandBlockerAction.values())
-            {
-                if (action.getToken().equalsIgnoreCase(token))
-                {
+        public static CommandBlockerAction fromToken(String token) {
+            for (CommandBlockerAction action : CommandBlockerAction.values()) {
+                if (action.getToken().equalsIgnoreCase(token)) {
                     return action;
                 }
             }
@@ -256,21 +213,19 @@ public class TFM_CommandBlocker
         }
     }
 
-    public static class CommandBlockerEntry
-    {
+    public static class CommandBlockerEntry {
+
         private final CommandBlockerRank rank;
         private final CommandBlockerAction action;
         private final String command;
         private final String subCommand;
         private final String message;
 
-        private CommandBlockerEntry(CommandBlockerRank rank, CommandBlockerAction action, String command, String message)
-        {
+        private CommandBlockerEntry(CommandBlockerRank rank, CommandBlockerAction action, String command, String message) {
             this(rank, action, command, null, message);
         }
 
-        private CommandBlockerEntry(CommandBlockerRank rank, CommandBlockerAction action, String command, String subCommand, String message)
-        {
+        private CommandBlockerEntry(CommandBlockerRank rank, CommandBlockerAction action, String command, String subCommand, String message) {
             this.rank = rank;
             this.action = action;
             this.command = command;
@@ -278,42 +233,34 @@ public class TFM_CommandBlocker
             this.message = (message == null || message.equals("_") ? "That command is blocked." : message);
         }
 
-        public CommandBlockerAction getAction()
-        {
+        public CommandBlockerAction getAction() {
             return this.action;
         }
 
-        public String getCommand()
-        {
+        public String getCommand() {
             return this.command;
         }
 
-        public String getSubCommand()
-        {
+        public String getSubCommand() {
             return this.subCommand;
         }
 
-        public String getMessage()
-        {
+        public String getMessage() {
             return this.message;
         }
 
-        public CommandBlockerRank getRank()
-        {
+        public CommandBlockerRank getRank() {
             return this.rank;
         }
 
-        private void doActions(CommandSender sender)
-        {
-            if (action == CommandBlockerAction.BLOCK_AND_EJECT && sender instanceof Player)
-            {
+        private void doActions(CommandSender sender) {
+            if (action == CommandBlockerAction.BLOCK_AND_EJECT && sender instanceof Player) {
                 TFM_Util.autoEject((Player) sender, "You used a prohibited command: " + command);
                 TFM_Util.bcastMsg(sender.getName() + " was automatically kicked for using harmful commands.", ChatColor.RED);
                 return;
             }
 
-            if (action == CommandBlockerAction.BLOCK_UNKNOWN)
-            {
+            if (action == CommandBlockerAction.BLOCK_UNKNOWN) {
                 TFM_Util.playerMsg(sender, "Unknown command. Type \"help\" for help.", ChatColor.RESET);
                 return;
             }

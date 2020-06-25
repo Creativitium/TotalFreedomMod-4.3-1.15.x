@@ -6,16 +6,14 @@ import me.StevenLawson.TotalFreedomMod.TFM_Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class Module_list extends TFM_HTTPD_Module
-{
-    public Module_list(NanoHTTPD.HTTPSession session)
-    {
+public class Module_list extends TFM_HTTPD_Module {
+
+    public Module_list(NanoHTTPD.HTTPSession session) {
         super(session);
     }
 
     @Override
-    public String getBody()
-    {
+    public String getBody() {
         final StringBuilder body = new StringBuilder();
 
         final Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
@@ -24,34 +22,24 @@ public class Module_list extends TFM_HTTPD_Module
 
         body.append("<ul>\r\n");
 
-        for (Player player : onlinePlayers)
-        {
+        for (Player player : onlinePlayers) {
             String prefix = "";
-            if (TFM_AdminList.isSuperAdmin(player))
-            {
-                if (TFM_AdminList.isSeniorAdmin(player))
-                {
+            if (TFM_AdminList.isSuperAdmin(player)) {
+                if (TFM_AdminList.isSeniorAdmin(player)) {
                     prefix = "[SrA]";
-                }
-                else
-                {
+                } else {
                     prefix = "[SA]";
                 }
 
-                if (TFM_Util.DEVELOPERS.contains(player.getName()))
-                {
+                if (TFM_Util.DEVELOPERS.contains(player.getName())) {
                     prefix = "[Dev]";
                 }
 
-                if (player.getName().equals("markbyron"))
-                {
+                if (player.getName().equals("markbyron")) {
                     prefix = "[Owner]";
                 }
-            }
-            else
-            {
-                if (player.isOp())
-                {
+            } else {
+                if (player.isOp()) {
                     prefix = "[OP]";
                 }
             }
@@ -65,8 +53,7 @@ public class Module_list extends TFM_HTTPD_Module
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         return "Total Freedom - Online Users";
     }
 }

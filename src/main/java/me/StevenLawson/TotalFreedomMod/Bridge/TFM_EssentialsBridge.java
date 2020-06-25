@@ -7,118 +7,85 @@ import me.StevenLawson.TotalFreedomMod.TFM_Util;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
-public class TFM_EssentialsBridge
-{
+public class TFM_EssentialsBridge {
+
     private static Essentials essentialsPlugin = null;
 
-    private TFM_EssentialsBridge()
-    {
+    private TFM_EssentialsBridge() {
         throw new AssertionError();
     }
 
-    public static Essentials getEssentialsPlugin()
-    {
-        if (essentialsPlugin == null)
-        {
-            try
-            {
+    public static Essentials getEssentialsPlugin() {
+        if (essentialsPlugin == null) {
+            try {
                 final Plugin essentials = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-                if (essentials != null)
-                {
-                    if (essentials instanceof Essentials)
-                    {
+                if (essentials != null) {
+                    if (essentials instanceof Essentials) {
                         essentialsPlugin = (Essentials) essentials;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 TFM_Log.severe(ex);
             }
         }
         return essentialsPlugin;
     }
 
-    public static User getEssentialsUser(String username)
-    {
-        try
-        {
+    public static User getEssentialsUser(String username) {
+        try {
             final Essentials essentials = getEssentialsPlugin();
-            if (essentials != null)
-            {
+            if (essentials != null) {
                 return essentials.getUserMap().getUser(username);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
         return null;
     }
 
-    public static void setNickname(String username, String nickname)
-    {
-        try
-        {
+    public static void setNickname(String username, String nickname) {
+        try {
             final User user = getEssentialsUser(username);
-            if (user != null)
-            {
+            if (user != null) {
                 user.setNickname(nickname);
                 user.setDisplayNick();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
     }
 
-    public static String getNickname(String username)
-    {
-        try
-        {
+    public static String getNickname(String username) {
+        try {
             final User user = getEssentialsUser(username);
-            if (user != null)
-            {
+            if (user != null) {
                 return user.getNickname();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
         return null;
     }
 
-    public static long getLastActivity(String username)
-    {
-        try
-        {
+    public static long getLastActivity(String username) {
+        try {
             final User user = getEssentialsUser(username);
-            if (user != null)
-            {
+            if (user != null) {
                 return TFM_Util.<Long>getField(user, "lastActivity"); // This is weird
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
         return 0L;
     }
 
-    public static boolean isEssentialsEnabled()
-    {
-        try
-        {
+    public static boolean isEssentialsEnabled() {
+        try {
             final Essentials essentials = getEssentialsPlugin();
-            if (essentials != null)
-            {
+            if (essentials != null) {
                 return essentials.isEnabled();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
         return false;

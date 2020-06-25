@@ -11,38 +11,30 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.BOTH)
 @CommandParameters(description = "Manage the whitelist.", usage = "/<command> <on | off | list | count | add <player> | remove <player> | addall | purge>")
-public class Command_whitelist extends TFM_Command
-{
+public class Command_whitelist extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length < 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length < 1) {
             return false;
         }
 
         // list
-        if (args[0].equalsIgnoreCase("list"))
-        {
+        if (args[0].equalsIgnoreCase("list")) {
             playerMsg("Whitelisted players: " + TFM_Util.playerListToNames(server.getWhitelistedPlayers()));
             return true;
         }
 
         // count
-        if (args[0].equalsIgnoreCase("count"))
-        {
+        if (args[0].equalsIgnoreCase("count")) {
             int onlineWPs = 0;
             int offlineWPs = 0;
             int totalWPs = 0;
 
-            for (OfflinePlayer player : server.getWhitelistedPlayers())
-            {
-                if (player.isOnline())
-                {
+            for (OfflinePlayer player : server.getWhitelistedPlayers()) {
+                if (player.isOnline()) {
                     onlineWPs++;
-                }
-                else
-                {
+                } else {
                     offlineWPs++;
                 }
                 totalWPs++;
@@ -56,33 +48,28 @@ public class Command_whitelist extends TFM_Command
         }
 
         // all commands past this line are superadmin-only
-        if (!(senderIsConsole || TFM_AdminList.isSuperAdmin(sender)))
-        {
+        if (!(senderIsConsole || TFM_AdminList.isSuperAdmin(sender))) {
             sender.sendMessage(TFM_Command.MSG_NO_PERMS);
             return true;
         }
 
         // on
-        if (args[0].equalsIgnoreCase("on"))
-        {
+        if (args[0].equalsIgnoreCase("on")) {
             TFM_Util.adminAction(sender.getName(), "Turning the whitelist on.", true);
             server.setWhitelist(true);
             return true;
         }
 
         // off
-        if (args[0].equalsIgnoreCase("off"))
-        {
+        if (args[0].equalsIgnoreCase("off")) {
             TFM_Util.adminAction(sender.getName(), "Turning the whitelist off.", true);
             server.setWhitelist(false);
             return true;
         }
 
         // add
-        if (args[0].equalsIgnoreCase("add"))
-        {
-            if (args.length < 2)
-            {
+        if (args[0].equalsIgnoreCase("add")) {
+            if (args.length < 2) {
                 return false;
             }
 
@@ -90,8 +77,7 @@ public class Command_whitelist extends TFM_Command
 
             OfflinePlayer player = getPlayer(search_name);
 
-            if (player == null)
-            {
+            if (player == null) {
                 player = TFM_DepreciationAggregator.getOfflinePlayer(server, search_name);
             }
 
@@ -101,10 +87,8 @@ public class Command_whitelist extends TFM_Command
         }
 
         // remove
-        if ("remove".equals(args[0]))
-        {
-            if (args.length < 2)
-            {
+        if ("remove".equals(args[0])) {
+            if (args.length < 2) {
                 return false;
             }
 
@@ -112,19 +96,15 @@ public class Command_whitelist extends TFM_Command
 
             OfflinePlayer player = getPlayer(search_name);
 
-            if (player == null)
-            {
+            if (player == null) {
                 player = TFM_DepreciationAggregator.getOfflinePlayer(server, search_name);
             }
 
-            if (player.isWhitelisted())
-            {
+            if (player.isWhitelisted()) {
                 TFM_Util.adminAction(sender.getName(), "Removing " + player.getName() + " from the whitelist.", false);
                 player.setWhitelisted(false);
                 return true;
-            }
-            else
-            {
+            } else {
                 playerMsg("That player is not whitelisted");
                 return true;
             }
@@ -132,14 +112,11 @@ public class Command_whitelist extends TFM_Command
         }
 
         // addall
-        if (args[0].equalsIgnoreCase("addall"))
-        {
+        if (args[0].equalsIgnoreCase("addall")) {
             TFM_Util.adminAction(sender.getName(), "Adding all online players to the whitelist.", false);
             int counter = 0;
-            for (Player player : server.getOnlinePlayers())
-            {
-                if (!player.isWhitelisted())
-                {
+            for (Player player : server.getOnlinePlayers()) {
+                if (!player.isWhitelisted()) {
                     player.setWhitelisted(true);
                     counter++;
                 }
@@ -150,15 +127,13 @@ public class Command_whitelist extends TFM_Command
         }
 
         // all commands past this line are console/telnet only
-        if (!senderIsConsole)
-        {
+        if (!senderIsConsole) {
             sender.sendMessage(TFM_Command.MSG_NO_PERMS);
             return true;
         }
 
         //purge
-        if (args[0].equalsIgnoreCase("purge"))
-        {
+        if (args[0].equalsIgnoreCase("purge")) {
             TFM_Util.adminAction(sender.getName(), "Removing all players from the whitelist.", false);
             playerMsg("Removed " + TFM_ServerInterface.purgeWhitelist() + " players from the whitelist.");
 

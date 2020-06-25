@@ -10,13 +10,12 @@ import me.StevenLawson.TotalFreedomMod.TFM_Log;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class Module_dump extends TFM_HTTPD_Module
-{
+public class Module_dump extends TFM_HTTPD_Module {
+
     private File echoFile = null;
     private final String body;
 
-    public Module_dump(NanoHTTPD.HTTPSession session)
-    {
+    public Module_dump(NanoHTTPD.HTTPSession session) {
         super(session);
 
         //Body needs to be computed before getResponse, so we know if a text response or a file echo is needed.
@@ -24,29 +23,23 @@ public class Module_dump extends TFM_HTTPD_Module
     }
 
     @Override
-    public NanoHTTPD.Response getResponse()
-    {
+    public NanoHTTPD.Response getResponse() {
         String echo = params.get("echo");
         boolean doEcho = echo != null && ((echo = echo.toLowerCase().trim()).equalsIgnoreCase("true") || echo.equalsIgnoreCase("1"));
 
-        if (doEcho && this.echoFile != null && this.echoFile.exists())
-        {
+        if (doEcho && this.echoFile != null && this.echoFile.exists()) {
             return TFM_HTTPD_Manager.serveFileBasic(this.echoFile);
-        }
-        else
-        {
+        } else {
             return super.getResponse();
         }
     }
 
     @Override
-    public String getBody()
-    {
+    public String getBody() {
         return body;
     }
 
-    private String body()
-    {
+    private String body() {
         StringBuilder responseBody = new StringBuilder();
 
         String remoteAddress = socket.getInetAddress().getHostAddress();
@@ -68,20 +61,17 @@ public class Module_dump extends TFM_HTTPD_Module
                 .append(list(files));
 
         Iterator<Map.Entry<String, String>> it = files.entrySet().iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Map.Entry<String, String> entry = it.next();
             String formName = entry.getKey();
             String tempFileName = entry.getValue();
             String origFileName = params.get(formName);
 
             File tempFile = new File(tempFileName);
-            if (tempFile.exists())
-            {
+            if (tempFile.exists()) {
                 this.echoFile = tempFile;
 
-                if (origFileName.contains("../"))
-                {
+                if (origFileName.contains("../")) {
                     continue;
                 }
 
@@ -89,12 +79,9 @@ public class Module_dump extends TFM_HTTPD_Module
 
                 File targetFile = new File(targetFileName);
 
-                try
-                {
+                try {
                     FileUtils.copyFile(tempFile, targetFile);
-                }
-                catch (IOException ex)
-                {
+                } catch (IOException ex) {
                     TFM_Log.severe(ex);
                 }
             }
@@ -104,8 +91,7 @@ public class Module_dump extends TFM_HTTPD_Module
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         return "TotalFreedomMod :: Request Debug Dumper";
     }
 }

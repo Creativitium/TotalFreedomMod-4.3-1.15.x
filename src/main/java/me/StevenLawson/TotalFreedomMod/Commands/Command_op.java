@@ -11,40 +11,31 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.BOTH)
 @CommandParameters(description = "Makes a player operator", usage = "/<command> <playername>")
-public class Command_op extends TFM_Command
-{
+public class Command_op extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("all") || args[0].equalsIgnoreCase("everyone"))
-        {
+        if (args[0].equalsIgnoreCase("all") || args[0].equalsIgnoreCase("everyone")) {
             playerMsg("Correct usage: /opall");
             return true;
         }
 
         OfflinePlayer player = null;
-        for (Player onlinePlayer : server.getOnlinePlayers())
-        {
-            if (args[0].equalsIgnoreCase(onlinePlayer.getName()))
-            {
+        for (Player onlinePlayer : server.getOnlinePlayers()) {
+            if (args[0].equalsIgnoreCase(onlinePlayer.getName())) {
                 player = onlinePlayer;
             }
         }
 
         // if the player is not online
-        if (player == null)
-        {
-            if (TFM_AdminList.isSuperAdmin(sender) || senderIsConsole)
-            {
+        if (player == null) {
+            if (TFM_AdminList.isSuperAdmin(sender) || senderIsConsole) {
                 player = TFM_DepreciationAggregator.getOfflinePlayer(server, args[0]);
-            }
-            else
-            {
+            } else {
                 playerMsg("That player is not online.");
                 playerMsg("You don't have permissions to OP offline players.", ChatColor.YELLOW);
                 return true;

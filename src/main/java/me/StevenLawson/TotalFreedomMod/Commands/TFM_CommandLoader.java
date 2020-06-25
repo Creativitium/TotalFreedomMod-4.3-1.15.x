@@ -22,40 +22,34 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
 
-public class TFM_CommandLoader
-{
+public class TFM_CommandLoader {
+
     public static final Pattern COMMAND_PATTERN;
     private static final List<TFM_CommandInfo> COMMAND_LIST;
 
-    static
-    {
+    static {
         COMMAND_PATTERN = Pattern.compile(TFM_CommandHandler.COMMAND_PATH.replace('.', '/') + "/(" + TFM_CommandHandler.COMMAND_PREFIX + "[^\\$]+)\\.class");
         COMMAND_LIST = new ArrayList<TFM_CommandInfo>();
     }
 
-    private TFM_CommandLoader()
-    {
+    private TFM_CommandLoader() {
         throw new AssertionError();
     }
 
-    public static void scan()
-    {
+    public static void scan() {
         CommandMap commandMap = getCommandMap();
-        if (commandMap == null)
-        {
+        if (commandMap == null) {
             TFM_Log.severe("Error loading commandMap.");
             return;
         }
         COMMAND_LIST.clear();
         COMMAND_LIST.addAll(getCommands());
 
-        for (TFM_CommandInfo commandInfo : COMMAND_LIST)
-        {
+        for (TFM_CommandInfo commandInfo : COMMAND_LIST) {
             TFM_DynamicCommand dynamicCommand = new TFM_DynamicCommand(commandInfo);
 
             Command existing = commandMap.getCommand(dynamicCommand.getName());
-            if (existing != null)
-            {
+            if (existing != null) {
                 unregisterCommand(existing, commandMap);
             }
 
@@ -65,48 +59,36 @@ public class TFM_CommandLoader
         TFM_Log.info("TFM commands loaded.");
     }
 
-    public static void unregisterCommand(String commandName)
-    {
+    public static void unregisterCommand(String commandName) {
         CommandMap commandMap = getCommandMap();
-        if (commandMap != null)
-        {
+        if (commandMap != null) {
             Command command = commandMap.getCommand(commandName.toLowerCase());
-            if (command != null)
-            {
+            if (command != null) {
                 unregisterCommand(command, commandMap);
             }
         }
     }
 
-    public static void unregisterCommand(Command command, CommandMap commandMap)
-    {
-        try
-        {
+    public static void unregisterCommand(Command command, CommandMap commandMap) {
+        try {
             command.unregister(commandMap);
             HashMap<String, Command> knownCommands = getKnownCommands(commandMap);
-            if (knownCommands != null)
-            {
+            if (knownCommands != null) {
                 knownCommands.remove(command.getName());
-                for (String alias : command.getAliases())
-                {
+                for (String alias : command.getAliases()) {
                     knownCommands.remove(alias);
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static CommandMap getCommandMap()
-    {
+    public static CommandMap getCommandMap() {
         final Object commandMap = TFM_Util.getField(Bukkit.getServer().getPluginManager(), "commandMap");
-        if (commandMap != null)
-        {
-            if (commandMap instanceof CommandMap)
-            {
+        if (commandMap != null) {
+            if (commandMap instanceof CommandMap) {
                 return (CommandMap) commandMap;
             }
         }
@@ -114,45 +96,35 @@ public class TFM_CommandLoader
     }
 
     @SuppressWarnings("unchecked")
-    public static HashMap<String, Command> getKnownCommands(CommandMap commandMap)
-    {
+    public static HashMap<String, Command> getKnownCommands(CommandMap commandMap) {
         Object knownCommands = TFM_Util.getField(commandMap, "knownCommands");
-        if (knownCommands != null)
-        {
-            if (knownCommands instanceof HashMap)
-            {
+        if (knownCommands != null) {
+            if (knownCommands instanceof HashMap) {
                 return (HashMap<String, Command>) knownCommands;
             }
         }
         return null;
     }
 
-    private static List<TFM_CommandInfo> getCommands()
-    {
+    private static List<TFM_CommandInfo> getCommands() {
         List<TFM_CommandInfo> commandList = new ArrayList<TFM_CommandInfo>();
 
-        try
-        {
+        try {
             CodeSource codeSource = TotalFreedomMod.class.getProtectionDomain().getCodeSource();
-            if (codeSource != null)
-            {
+            if (codeSource != null) {
                 ZipInputStream zip = new ZipInputStream(codeSource.getLocation().openStream());
                 ZipEntry zipEntry;
-                while ((zipEntry = zip.getNextEntry()) != null)
-                {
+                while ((zipEntry = zip.getNextEntry()) != null) {
                     String entryName = zipEntry.getName();
                     Matcher matcher = COMMAND_PATTERN.matcher(entryName);
-                    if (matcher.find())
-                    {
-                        try
-                        {
+                    if (matcher.find()) {
+                        try {
                             Class<?> commandClass = Class.forName(TFM_CommandHandler.COMMAND_PATH + "." + matcher.group(1));
 
                             CommandPermissions commandPermissions = commandClass.getAnnotation(CommandPermissions.class);
                             CommandParameters commandParameters = commandClass.getAnnotation(CommandParameters.class);
 
-                            if (commandPermissions != null && commandParameters != null)
-                            {
+                            if (commandPermissions != null && commandParameters != null) {
                                 TFM_CommandInfo commandInfo = new TFM_CommandInfo(
                                         commandClass,
                                         matcher.group(1).split("_")[1],
@@ -165,25 +137,21 @@ public class TFM_CommandLoader
 
                                 commandList.add(commandInfo);
                             }
-                        }
-                        catch (ClassNotFoundException ex)
-                        {
+                        } catch (ClassNotFoundException ex) {
                             TFM_Log.severe(ex);
                         }
                     }
                 }
             }
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             TFM_Log.severe(ex);
         }
 
         return commandList;
     }
 
-    public static class TFM_CommandInfo
-    {
+    public static class TFM_CommandInfo {
+
         private final String commandName;
         private final Class<?> commandClass;
         private final AdminLevel level;
@@ -193,8 +161,7 @@ public class TFM_CommandLoader
         private final String usage;
         private final List<String> aliases;
 
-        public TFM_CommandInfo(Class<?> commandClass, String commandName, AdminLevel level, SourceType source, boolean blockHostConsole, String description, String usage, String aliases)
-        {
+        public TFM_CommandInfo(Class<?> commandClass, String commandName, AdminLevel level, SourceType source, boolean blockHostConsole, String description, String usage, String aliases) {
             this.commandName = commandName;
             this.commandClass = commandClass;
             this.level = level;
@@ -205,32 +172,26 @@ public class TFM_CommandLoader
             this.aliases = ("".equals(aliases) ? new ArrayList<String>() : Arrays.asList(aliases.split(",")));
         }
 
-        public List<String> getAliases()
-        {
+        public List<String> getAliases() {
             return Collections.unmodifiableList(aliases);
         }
 
-        public Class<?> getCommandClass()
-        {
+        public Class<?> getCommandClass() {
             return commandClass;
         }
 
-        public String getCommandName()
-        {
+        public String getCommandName() {
             return commandName;
         }
 
-        public String getDescription()
-        {
+        public String getDescription() {
             return description;
         }
 
-        public String getDescriptionPermissioned()
-        {
+        public String getDescriptionPermissioned() {
             String _description = description;
 
-            switch (this.getLevel())
-            {
+            switch (this.getLevel()) {
                 case SENIOR:
                     _description = "Senior " + (this.getSource() == SourceType.ONLY_CONSOLE ? "Console" : "") + " Command - " + _description;
                     break;
@@ -245,29 +206,24 @@ public class TFM_CommandLoader
             return _description;
         }
 
-        public AdminLevel getLevel()
-        {
+        public AdminLevel getLevel() {
             return level;
         }
 
-        public SourceType getSource()
-        {
+        public SourceType getSource() {
             return source;
         }
 
-        public String getUsage()
-        {
+        public String getUsage() {
             return usage;
         }
 
-        public boolean getBlockHostConsole()
-        {
+        public boolean getBlockHostConsole() {
             return blockHostConsole;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("commandName: ").append(commandName);
             sb.append("\ncommandClass: ").append(commandClass.getName());
@@ -281,40 +237,32 @@ public class TFM_CommandLoader
         }
     }
 
-    public static class TFM_DynamicCommand extends Command implements PluginIdentifiableCommand
-    {
+    public static class TFM_DynamicCommand extends Command implements PluginIdentifiableCommand {
+
         private final TFM_CommandInfo commandInfo;
 
-        private TFM_DynamicCommand(TFM_CommandInfo commandInfo)
-        {
+        private TFM_DynamicCommand(TFM_CommandInfo commandInfo) {
             super(commandInfo.getCommandName(), commandInfo.getDescriptionPermissioned(), commandInfo.getUsage(), commandInfo.getAliases());
 
             this.commandInfo = commandInfo;
         }
 
         @Override
-        public boolean execute(CommandSender sender, String commandLabel, String[] args)
-        {
+        public boolean execute(CommandSender sender, String commandLabel, String[] args) {
             boolean success = false;
 
-            if (!getPlugin().isEnabled())
-            {
+            if (!getPlugin().isEnabled()) {
                 return false;
             }
 
-            try
-            {
+            try {
                 success = getPlugin().onCommand(sender, this, commandLabel, args);
-            }
-            catch (Throwable ex)
-            {
+            } catch (Throwable ex) {
                 throw new CommandException("Unhandled exception executing command '" + commandLabel + "' in plugin " + getPlugin().getDescription().getFullName(), ex);
             }
 
-            if (!success && getUsage().length() > 0)
-            {
-                for (String line : getUsage().replace("<command>", commandLabel).split("\n"))
-                {
+            if (!success && getUsage().length() > 0) {
+                for (String line : getUsage().replace("<command>", commandLabel).split("\n")) {
                     sender.sendMessage(line);
                 }
             }
@@ -323,13 +271,11 @@ public class TFM_CommandLoader
         }
 
         @Override
-        public Plugin getPlugin()
-        {
+        public Plugin getPlugin() {
             return TotalFreedomMod.plugin;
         }
 
-        public TFM_CommandInfo getCommandInfo()
-        {
+        public TFM_CommandInfo getCommandInfo() {
             return commandInfo;
         }
     }

@@ -32,8 +32,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.mcstats.Metrics;
 
-public class TotalFreedomMod extends JavaPlugin
-{
+public class TotalFreedomMod extends JavaPlugin {
+
     public static final long HEARTBEAT_RATE = 5L; // Seconds
     public static final long SERVICE_CHECKER_RATE = 120L;
     public static final int MAX_USERNAME_LENGTH = 20;
@@ -61,8 +61,7 @@ public class TotalFreedomMod extends JavaPlugin
     public static Map<Player, Double> fuckoffEnabledFor = new HashMap<Player, Double>();
 
     @Override
-    public void onLoad()
-    {
+    public void onLoad() {
         TotalFreedomMod.plugin = this;
         TotalFreedomMod.server = plugin.getServer();
         TotalFreedomMod.pluginName = plugin.getDescription().getName();
@@ -75,16 +74,14 @@ public class TotalFreedomMod extends JavaPlugin
     }
 
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
         TFM_Log.info("Made by Madgeek1450 and Prozza");
         TFM_Log.info("Compiled " + buildDate + " by " + buildCreator);
 
         final TFM_Util.MethodTimer timer = new TFM_Util.MethodTimer();
         timer.start();
 
-        if (!TFM_ServerInterface.COMPILE_NMS_VERSION.equals(TFM_Util.getNmsVersion()))
-        {
+        if (!TFM_ServerInterface.COMPILE_NMS_VERSION.equals(TFM_Util.getNmsVersion())) {
             TFM_Log.warning(pluginName + " is compiled for " + TFM_ServerInterface.COMPILE_NMS_VERSION + " but the server is running "
                     + "version " + TFM_Util.getNmsVersion() + "!");
             TFM_Log.warning("This might result in unexpected behaviour!");
@@ -121,21 +118,15 @@ public class TotalFreedomMod extends JavaPlugin
         pm.registerEvents(new TFM_BukkitTelnetListener(), plugin);
         pm.registerEvents(new TFM_WorldEditListener(), plugin);
 
-        try
-        {
+        try {
             TFM_Flatlands.getInstance().getWorld();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.warning("Could not load world: Flatlands");
         }
 
-        try
-        {
+        try {
             TFM_AdminWorld.getInstance().getWorld();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.warning("Could not load world: AdminWorld");
         }
 
@@ -150,10 +141,8 @@ public class TotalFreedomMod extends JavaPlugin
         TFM_GameRuleHandler.commitGameRules();
 
         // Disable weather
-        if (TFM_ConfigEntry.DISABLE_WEATHER.getBoolean())
-        {
-            for (World world : server.getWorlds())
-            {
+        if (TFM_ConfigEntry.DISABLE_WEATHER.getBoolean()) {
+            for (World world : server.getWorlds()) {
                 world.setThundering(false);
                 world.setStorm(false);
                 world.setThunderDuration(0);
@@ -174,21 +163,16 @@ public class TotalFreedomMod extends JavaPlugin
         TFM_Log.info("Version " + pluginVersion + " for " + TFM_ServerInterface.COMPILE_NMS_VERSION + " enabled in " + timer.getTotal() + "ms");
 
         // Metrics @ http://mcstats.org/plugin/TotalFreedomMod
-        try
-        {
+        try {
             final Metrics metrics = new Metrics(plugin);
             metrics.start();
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             TFM_Log.warning("Failed to submit metrics data: " + ex.getMessage());
         }
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 TFM_CommandLoader.scan();
                 TFM_CommandBlocker.load();
 
@@ -199,8 +183,7 @@ public class TotalFreedomMod extends JavaPlugin
     }
 
     @Override
-    public void onDisable()
-    {
+    public void onDisable() {
         TFM_HTTPD_Manager.stop();
         TFM_BanManager.save();
         TFM_UuidManager.close();
@@ -212,15 +195,12 @@ public class TotalFreedomMod extends JavaPlugin
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-    {
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         return TFM_CommandHandler.handleCommand(sender, cmd, commandLabel, args);
     }
 
-    private static void setAppProperties()
-    {
-        try
-        {
+    private static void setAppProperties() {
+        try {
             final InputStream in = plugin.getResource("appinfo.properties");
             Properties props = new Properties();
 
@@ -231,9 +211,7 @@ public class TotalFreedomMod extends JavaPlugin
             TotalFreedomMod.buildNumber = props.getProperty("program.buildnumber");
             TotalFreedomMod.buildDate = props.getProperty("program.builddate");
             TotalFreedomMod.buildCreator = props.getProperty("program.buildcreator");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe("Could not load App properties!");
             TFM_Log.severe(ex);
         }

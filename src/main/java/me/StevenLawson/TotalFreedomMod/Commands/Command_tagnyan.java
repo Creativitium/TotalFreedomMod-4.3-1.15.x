@@ -10,20 +10,17 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.ONLY_IN_GAME)
 @CommandParameters(description = "Gives you a tag with random colors", usage = "/<command> <tag>", aliases = "tn")
-public class Command_tagnyan extends TFM_Command
-{
+public class Command_tagnyan extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length < 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length < 1) {
             return false;
         }
 
         final StringBuilder tag = new StringBuilder();
 
-        for (char c : ChatColor.stripColor(TFM_Util.colorize(StringUtils.join(args, " "))).toCharArray())
-        {
+        for (char c : ChatColor.stripColor(TFM_Util.colorize(StringUtils.join(args, " "))).toCharArray()) {
             tag.append(TFM_Util.randomChatColor()).append(c);
         }
 

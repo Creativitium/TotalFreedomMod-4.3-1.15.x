@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class TFM_Player
-{
+public class TFM_Player {
+
     private final UUID uuid;
     private String firstJoinName;
     private String lastJoinName;
@@ -15,8 +15,7 @@ public class TFM_Player
     private long lastJoinUnix;
     private final List<String> ips;
 
-    protected TFM_Player(UUID uuid, ConfigurationSection section)
-    {
+    protected TFM_Player(UUID uuid, ConfigurationSection section) {
         this(uuid);
 
         this.firstJoinName = section.getString("firstjoinname");
@@ -28,8 +27,7 @@ public class TFM_Player
         this.ips.addAll(section.getStringList("ips"));
     }
 
-    protected TFM_Player(UUID uuid, String firstJoinName, String lastJoinName, long firstJoinUnix, long lastJoinUnix, List<String> ips)
-    {
+    protected TFM_Player(UUID uuid, String firstJoinName, String lastJoinName, long firstJoinUnix, long lastJoinUnix, List<String> ips) {
         this(uuid);
 
         this.firstJoinName = firstJoinName;
@@ -41,10 +39,8 @@ public class TFM_Player
         this.ips.addAll(ips);
     }
 
-    protected TFM_Player(UUID uuid)
-    {
-        if (uuid == null)
-        {
+    protected TFM_Player(UUID uuid) {
+        if (uuid == null) {
             throw new IllegalArgumentException("UUID can not be null!");
         }
 
@@ -53,68 +49,55 @@ public class TFM_Player
     }
 
     // Getters / Setters below
-    public UUID getUniqueId()
-    {
+    public UUID getUniqueId() {
         return uuid;
     }
 
-    public List<String> getIps()
-    {
+    public List<String> getIps() {
         return Collections.unmodifiableList(ips);
     }
 
-    public String getFirstLoginName()
-    {
+    public String getFirstLoginName() {
         return firstJoinName;
     }
 
-    public void setFirstLoginName(String firstJoinName)
-    {
+    public void setFirstLoginName(String firstJoinName) {
         this.firstJoinName = firstJoinName;
     }
 
-    public String getLastLoginName()
-    {
+    public String getLastLoginName() {
         return lastJoinName;
     }
 
-    public void setLastLoginName(String lastJoinName)
-    {
+    public void setLastLoginName(String lastJoinName) {
         this.lastJoinName = lastJoinName;
     }
 
-    public long getFirstLoginUnix()
-    {
+    public long getFirstLoginUnix() {
         return firstJoinUnix;
     }
 
-    public void setFirstLoginUnix(long firstJoinUnix)
-    {
+    public void setFirstLoginUnix(long firstJoinUnix) {
         this.firstJoinUnix = firstJoinUnix;
     }
 
-    public long getLastLoginUnix()
-    {
+    public long getLastLoginUnix() {
         return lastJoinUnix;
     }
 
-    public void setLastLoginUnix(long lastJoinUnix)
-    {
+    public void setLastLoginUnix(long lastJoinUnix) {
         this.lastJoinUnix = lastJoinUnix;
     }
 
-    public boolean addIp(String ip)
-    {
-        if (!ips.contains(ip))
-        {
+    public boolean addIp(String ip) {
+        if (!ips.contains(ip)) {
             ips.add(ip);
             return true;
         }
         return false;
     }
 
-    public final boolean isComplete()
-    {
+    public final boolean isComplete() {
         return firstJoinName != null
                 && lastJoinName != null
                 && firstJoinUnix != 0
@@ -122,8 +105,7 @@ public class TFM_Player
                 && !ips.isEmpty();
     }
 
-    public void save()
-    {
+    public void save() {
         TFM_PlayerList.save(this);
     }
 }

@@ -16,57 +16,45 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.OP, source = SourceType.BOTH)
 @CommandParameters(description = "Manage superadmins.", usage = "/<command> <list | clean | clearme [ip] | <add | delete | info> <username>>")
-public class Command_saconfig extends TFM_Command
-{
+public class Command_saconfig extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         final SAConfigMode mode;
-        try
-        {
+        try {
             mode = SAConfigMode.findMode(args, sender, senderIsConsole);
-        }
-        catch (final PermissionsException ex)
-        {
+        } catch (final PermissionsException ex) {
             playerMsg(ex.getMessage());
             return true;
-        }
-        catch (final FormatException ex)
-        {
+        } catch (final FormatException ex) {
             playerMsg(ex.getMessage());
             return false;
         }
 
-        switch (mode)
-        {
-            case LIST:
-            {
+        switch (mode) {
+            case LIST: {
                 playerMsg("Superadmins: " + StringUtils.join(TFM_AdminList.getSuperNames(), ", "), ChatColor.GOLD);
 
                 break;
             }
-            case CLEAN:
-            {
+            case CLEAN: {
                 TFM_Util.adminAction(sender.getName(), "Cleaning superadmin list", true);
                 TFM_AdminList.cleanSuperadminList(true);
                 playerMsg("Superadmins: " + StringUtils.join(TFM_AdminList.getSuperNames(), ", "), ChatColor.YELLOW);
 
                 break;
             }
-            case CLEARME:
-            {
+            case CLEARME: {
                 final TFM_Admin admin = TFM_AdminList.getEntry(sender_p);
 
-                if (admin == null)
-                {
+                if (admin == null) {
                     playerMsg("Could not find your admin entry! Please notify a developer.", ChatColor.RED);
                     return true;
                 }
 
                 final String ip = TFM_Util.getIp(sender_p);
 
-                if (args.length == 1)
-                {
+                if (args.length == 1) {
                     TFM_Util.adminAction(sender.getName(), "Cleaning my supered IPs", true);
 
                     int counter = admin.getIps().size() - 1;
@@ -77,19 +65,12 @@ public class Command_saconfig extends TFM_Command
 
                     playerMsg(counter + " IPs removed.");
                     playerMsg(admin.getIps().get(0) + " is now your only IP address");
-                }
-                else
-                {
-                    if (!admin.getIps().contains(args[1]))
-                    {
+                } else {
+                    if (!admin.getIps().contains(args[1])) {
                         playerMsg("That IP is not registered to you.");
-                    }
-                    else if (ip.equals(args[1]))
-                    {
+                    } else if (ip.equals(args[1])) {
                         playerMsg("You cannot remove your current IP.");
-                    }
-                    else
-                    {
+                    } else {
                         TFM_Util.adminAction(sender.getName(), "Removing a supered IP", true);
 
                         admin.removeIp(args[1]);
@@ -103,40 +84,31 @@ public class Command_saconfig extends TFM_Command
 
                 break;
             }
-            case INFO:
-            {
+            case INFO: {
                 TFM_Admin superadmin = TFM_AdminList.getEntry(args[1].toLowerCase());
 
-                if (superadmin == null)
-                {
+                if (superadmin == null) {
                     final Player player = getPlayer(args[1]);
-                    if (player != null)
-                    {
+                    if (player != null) {
                         superadmin = TFM_AdminList.getEntry(player.getName().toLowerCase());
                     }
                 }
 
-                if (superadmin == null)
-                {
+                if (superadmin == null) {
                     playerMsg("Superadmin not found: " + args[1]);
-                }
-                else
-                {
+                } else {
                     playerMsg(superadmin.toString());
                 }
 
                 break;
             }
-            case ADD:
-            {
+            case ADD: {
                 OfflinePlayer player = getPlayer(args[1], true); // Exact case-insensitive match.
 
-                if (player == null)
-                {
+                if (player == null) {
                     final TFM_Admin superadmin = TFM_AdminList.getEntry(args[1]);
 
-                    if (superadmin == null)
-                    {
+                    if (superadmin == null) {
                         playerMsg(TFM_Command.PLAYER_NOT_FOUND);
                         return true;
                     }
@@ -147,12 +119,10 @@ public class Command_saconfig extends TFM_Command
                 TFM_Util.adminAction(sender.getName(), "Adding " + player.getName() + " to the superadmin list", true);
                 TFM_AdminList.addSuperadmin(player);
 
-                if (player.isOnline())
-                {
+                if (player.isOnline()) {
                     final TFM_PlayerData playerdata = TFM_PlayerData.getPlayerData(player.getPlayer());
 
-                    if (playerdata.isFrozen())
-                    {
+                    if (playerdata.isFrozen()) {
                         playerdata.setFrozen(false);
                         playerMsg(player.getPlayer(), "You have been unfrozen.");
                     }
@@ -160,19 +130,16 @@ public class Command_saconfig extends TFM_Command
 
                 break;
             }
-            case DELETE:
-            {
+            case DELETE: {
                 String targetName = args[1];
 
                 final Player player = getPlayer(targetName, true); // Exact case-insensitive match.
 
-                if (player != null)
-                {
+                if (player != null) {
                     targetName = player.getName();
                 }
 
-                if (!TFM_AdminList.getLowercaseSuperNames().contains(targetName.toLowerCase()))
-                {
+                if (!TFM_AdminList.getLowercaseSuperNames().contains(targetName.toLowerCase())) {
                     playerMsg("Superadmin not found: " + targetName);
                     return true;
                 }
@@ -181,8 +148,7 @@ public class Command_saconfig extends TFM_Command
                 TFM_AdminList.removeSuperadmin(TFM_DepreciationAggregator.getOfflinePlayer(server, targetName));
 
                 // Twitterbot
-                if (TFM_ConfigEntry.TWITTERBOT_ENABLED.getBoolean())
-                {
+                if (TFM_ConfigEntry.TWITTERBOT_ENABLED.getBoolean()) {
                     TFM_TwitterHandler.delTwitterVerbose(targetName, sender);
                 }
 
@@ -193,8 +159,7 @@ public class Command_saconfig extends TFM_Command
         return true;
     }
 
-    private static enum SAConfigMode
-    {
+    private static enum SAConfigMode {
         LIST("list", AdminLevel.OP, SourceType.BOTH, 1, 1),
         CLEAN("clean", AdminLevel.SENIOR, SourceType.BOTH, 1, 1),
         CLEARME("clearme", AdminLevel.SUPER, SourceType.ONLY_IN_GAME, 1, 2),
@@ -207,8 +172,7 @@ public class Command_saconfig extends TFM_Command
         private final int minArgs;
         private final int maxArgs;
 
-        private SAConfigMode(String modeName, AdminLevel adminLevel, SourceType sourceType, int minArgs, int maxArgs)
-        {
+        private SAConfigMode(String modeName, AdminLevel adminLevel, SourceType sourceType, int minArgs, int maxArgs) {
             this.modeName = modeName;
             this.adminLevel = adminLevel;
             this.sourceType = sourceType;
@@ -216,56 +180,39 @@ public class Command_saconfig extends TFM_Command
             this.maxArgs = maxArgs;
         }
 
-        private static SAConfigMode findMode(final String[] args, final CommandSender sender, final boolean senderIsConsole) throws PermissionsException, FormatException
-        {
-            if (args.length == 0)
-            {
+        private static SAConfigMode findMode(final String[] args, final CommandSender sender, final boolean senderIsConsole) throws PermissionsException, FormatException {
+            if (args.length == 0) {
                 throw new FormatException("Invalid number of arguments.");
             }
 
             boolean isSuperAdmin = TFM_AdminList.isSuperAdmin(sender);
             boolean isSeniorAdmin = isSuperAdmin ? TFM_AdminList.isSeniorAdmin(sender, false) : false;
 
-            for (final SAConfigMode mode : values())
-            {
-                if (mode.modeName.equalsIgnoreCase(args[0]))
-                {
-                    if (mode.adminLevel == AdminLevel.SUPER)
-                    {
-                        if (!isSuperAdmin)
-                        {
+            for (final SAConfigMode mode : values()) {
+                if (mode.modeName.equalsIgnoreCase(args[0])) {
+                    if (mode.adminLevel == AdminLevel.SUPER) {
+                        if (!isSuperAdmin) {
                             throw new PermissionsException(TFM_Command.MSG_NO_PERMS);
                         }
-                    }
-                    else if (mode.adminLevel == AdminLevel.SENIOR)
-                    {
-                        if (!isSeniorAdmin)
-                        {
+                    } else if (mode.adminLevel == AdminLevel.SENIOR) {
+                        if (!isSeniorAdmin) {
                             throw new PermissionsException(TFM_Command.MSG_NO_PERMS);
                         }
                     }
 
-                    if (mode.sourceType == SourceType.ONLY_IN_GAME)
-                    {
-                        if (senderIsConsole)
-                        {
+                    if (mode.sourceType == SourceType.ONLY_IN_GAME) {
+                        if (senderIsConsole) {
                             throw new PermissionsException("This command may only be used in-game.");
                         }
-                    }
-                    else if (mode.sourceType == SourceType.ONLY_CONSOLE)
-                    {
-                        if (!senderIsConsole)
-                        {
+                    } else if (mode.sourceType == SourceType.ONLY_CONSOLE) {
+                        if (!senderIsConsole) {
                             throw new PermissionsException("This command may only be used from the console.");
                         }
                     }
 
-                    if (args.length >= mode.minArgs && args.length <= mode.maxArgs)
-                    {
+                    if (args.length >= mode.minArgs && args.length <= mode.maxArgs) {
                         return mode;
-                    }
-                    else
-                    {
+                    } else {
                         throw new FormatException("Invalid number of arguments for mode: " + mode.modeName);
                     }
                 }
@@ -275,18 +222,16 @@ public class Command_saconfig extends TFM_Command
         }
     }
 
-    private static class PermissionsException extends Exception
-    {
-        public PermissionsException(final String message)
-        {
+    private static class PermissionsException extends Exception {
+
+        public PermissionsException(final String message) {
             super(message);
         }
     }
 
-    private static class FormatException extends Exception
-    {
-        public FormatException(final String message)
-        {
+    private static class FormatException extends Exception {
+
+        public FormatException(final String message) {
             super(message);
         }
     }

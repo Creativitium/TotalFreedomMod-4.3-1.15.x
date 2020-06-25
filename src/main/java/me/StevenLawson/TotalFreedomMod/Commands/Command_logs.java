@@ -22,15 +22,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.ONLY_IN_GAME)
 @CommandParameters(description = "Register your connection with the TFM logviewer.", usage = "/<command> [off]")
-public class Command_logs extends TFM_Command
-{
+public class Command_logs extends TFM_Command {
+
     @Override
-    public boolean run(final CommandSender sender, final Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(final CommandSender sender, final Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         LogsRegistrationMode mode = LogsRegistrationMode.UPDATE;
 
-        if (args.length == 1)
-        {
+        if (args.length == 1) {
             mode = ("off".equals(args[0]) ? LogsRegistrationMode.DELETE : LogsRegistrationMode.UPDATE);
         }
 
@@ -39,30 +37,23 @@ public class Command_logs extends TFM_Command
         return true;
     }
 
-    public static void updateLogsRegistration(final CommandSender sender, final Player target, final LogsRegistrationMode mode)
-    {
+    public static void updateLogsRegistration(final CommandSender sender, final Player target, final LogsRegistrationMode mode) {
         updateLogsRegistration(sender, target.getName(), target.getAddress().getAddress().getHostAddress().trim(), mode);
     }
 
-    public static void updateLogsRegistration(final CommandSender sender, final String targetName, final String targetIP, final LogsRegistrationMode mode)
-    {
+    public static void updateLogsRegistration(final CommandSender sender, final String targetName, final String targetIP, final LogsRegistrationMode mode) {
         final String logsRegisterURL = TFM_ConfigEntry.LOGS_URL.getString();
         final String logsRegisterPassword = TFM_ConfigEntry.LOGS_SECRET.getString();
 
-        if (logsRegisterURL == null || logsRegisterPassword == null || logsRegisterURL.isEmpty() || logsRegisterPassword.isEmpty())
-        {
+        if (logsRegisterURL == null || logsRegisterPassword == null || logsRegisterURL.isEmpty() || logsRegisterPassword.isEmpty()) {
             return;
         }
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             @Override
-            public void run()
-            {
-                try
-                {
-                    if (sender != null)
-                    {
+            public void run() {
+                try {
+                    if (sender != null) {
                         sender.sendMessage(ChatColor.YELLOW + "Connecting...");
                     }
 
@@ -81,80 +72,63 @@ public class Command_logs extends TFM_Command
 
                     final int responseCode = connection.getResponseCode();
 
-                    if (sender != null)
-                    {
-                        new BukkitRunnable()
-                        {
+                    if (sender != null) {
+                        new BukkitRunnable() {
                             @Override
-                            public void run()
-                            {
-                                if (responseCode == 200)
-                                {
+                            public void run() {
+                                if (responseCode == 200) {
                                     sender.sendMessage(ChatColor.GREEN + "Registration " + mode.toString() + "d.");
-                                }
-                                else
-                                {
+                                } else {
                                     sender.sendMessage(ChatColor.RED + "Error contacting logs registration server.");
                                 }
                             }
                         }.runTask(TotalFreedomMod.plugin);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     TFM_Log.severe(ex);
                 }
             }
         }.runTaskAsynchronously(TotalFreedomMod.plugin);
     }
 
-    public static void deactivateSuperadmin(TFM_Admin superadmin)
-    {
-        for (String ip : superadmin.getIps())
-        {
+    public static void deactivateSuperadmin(TFM_Admin superadmin) {
+        for (String ip : superadmin.getIps()) {
             updateLogsRegistration(null, superadmin.getLastLoginName(), ip, Command_logs.LogsRegistrationMode.DELETE);
         }
     }
 
-    public static enum LogsRegistrationMode
-    {
+    public static enum LogsRegistrationMode {
         UPDATE("update"), DELETE("delete");
         private final String mode;
 
-        private LogsRegistrationMode(String mode)
-        {
+        private LogsRegistrationMode(String mode) {
             this.mode = mode;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return mode;
         }
     }
 
-    private static class URLBuilder
-    {
+    private static class URLBuilder {
+
         private final String requestPath;
         private final Map<String, String> queryStringMap = new HashMap<String, String>();
 
-        public URLBuilder(String requestPath)
-        {
+        public URLBuilder(String requestPath) {
             this.requestPath = requestPath;
         }
 
-        public URLBuilder addQueryParameter(String key, String value)
-        {
+        public URLBuilder addQueryParameter(String key, String value) {
             queryStringMap.put(key, value);
             return this;
         }
 
-        public URL getURL() throws MalformedURLException
-        {
+        public URL getURL() throws MalformedURLException {
             List<String> pairs = new ArrayList<String>();
             Iterator<Entry<String, String>> it = queryStringMap.entrySet().iterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Entry<String, String> pair = it.next();
                 pairs.add(pair.getKey() + "=" + pair.getValue());
             }

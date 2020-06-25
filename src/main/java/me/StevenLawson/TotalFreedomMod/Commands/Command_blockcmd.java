@@ -9,25 +9,20 @@ import org.bukkit.entity.Player;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "Block all commands for a specific player.", usage = "/<command> <purge | <partialname>>", aliases = "blockcommands,blockcommand")
-public class Command_blockcmd extends TFM_Command
-{
+public class Command_blockcmd extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
-        if (args.length != 1)
-        {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
+        if (args.length != 1) {
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("purge"))
-        {
+        if (args[0].equalsIgnoreCase("purge")) {
             TFM_Util.adminAction(sender.getName(), "Unblocking commands for all players", true);
             int counter = 0;
-            for (Player player : server.getOnlinePlayers())
-            {
+            for (Player player : server.getOnlinePlayers()) {
                 TFM_PlayerData playerdata = TFM_PlayerData.getPlayerData(player);
-                if (playerdata.allCommandsBlocked())
-                {
+                if (playerdata.allCommandsBlocked()) {
                     counter += 1;
                     playerdata.setCommandsBlocked(false);
                 }
@@ -38,14 +33,12 @@ public class Command_blockcmd extends TFM_Command
 
         final Player player = getPlayer(args[0]);
 
-        if (player == null)
-        {
+        if (player == null) {
             playerMsg(TFM_Command.PLAYER_NOT_FOUND);
             return true;
         }
 
-        if (TFM_AdminList.isSuperAdmin(player))
-        {
+        if (TFM_AdminList.isSuperAdmin(player)) {
             playerMsg(player.getName() + " is a Superadmin, and cannot have their commands blocked.");
             return true;
         }

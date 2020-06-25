@@ -12,19 +12,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.BOTH)
 @CommandParameters(description = "For the people that are still alive.", usage = "/<command>")
-public class Command_cake extends TFM_Command
-{
+public class Command_cake extends TFM_Command {
+
     public static final String CAKE_LYRICS = "But there's no sense crying over every mistake. You just keep on trying till you run out of cake.";
     private final Random random = new Random();
 
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         final StringBuilder output = new StringBuilder();
 
         final String[] words = CAKE_LYRICS.split(" ");
-        for (final String word : words)
-        {
+        for (final String word : words) {
             output.append(ChatColor.COLOR_CHAR).append(Integer.toHexString(1 + random.nextInt(14))).append(word).append(" ");
         }
 
@@ -33,11 +31,9 @@ public class Command_cake extends TFM_Command
         heldItemMeta.setDisplayName((new StringBuilder()).append(ChatColor.WHITE).append("The ").append(ChatColor.DARK_GRAY).append("Lie").toString());
         heldItem.setItemMeta(heldItemMeta);
 
-        for (final Player player : server.getOnlinePlayers())
-        {
+        for (final Player player : server.getOnlinePlayers()) {
             final int firstEmpty = player.getInventory().firstEmpty();
-            if (firstEmpty >= 0)
-            {
+            if (firstEmpty >= 0) {
                 player.getInventory().setItem(firstEmpty, heldItem);
             }
         }

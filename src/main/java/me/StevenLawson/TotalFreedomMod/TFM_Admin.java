@@ -11,8 +11,8 @@ import me.StevenLawson.TotalFreedomMod.Config.TFM_MainConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 
-public class TFM_Admin
-{
+public class TFM_Admin {
+
     private final UUID uuid;
     private String lastLoginName;
     private final String loginMessage;
@@ -23,8 +23,7 @@ public class TFM_Admin
     private Date lastLogin;
     private boolean isActivated;
 
-    public TFM_Admin(UUID uuid, String lastLoginName, Date lastLogin, String loginMessage, boolean isTelnetAdmin, boolean isSeniorAdmin, boolean isActivated)
-    {
+    public TFM_Admin(UUID uuid, String lastLoginName, Date lastLogin, String loginMessage, boolean isTelnetAdmin, boolean isSeniorAdmin, boolean isActivated) {
         this.uuid = uuid;
         this.lastLoginName = lastLoginName;
         this.ips = new ArrayList<String>();
@@ -36,8 +35,7 @@ public class TFM_Admin
         this.isActivated = isActivated;
     }
 
-    public TFM_Admin(UUID uuid, ConfigurationSection section)
-    {
+    public TFM_Admin(UUID uuid, ConfigurationSection section) {
         this.uuid = uuid;
         this.lastLoginName = section.getString("last_login_name");
         this.ips = section.getStringList("ips");
@@ -48,15 +46,13 @@ public class TFM_Admin
         this.consoleAliases = section.getStringList("console_aliases");
         this.isActivated = section.getBoolean("is_activated", true);
 
-        for (Iterator<?> it = TFM_MainConfig.getList(TFM_ConfigEntry.NOADMIN_IPS).iterator(); it.hasNext();)
-        {
+        for (Iterator<?> it = TFM_MainConfig.getList(TFM_ConfigEntry.NOADMIN_IPS).iterator(); it.hasNext();) {
             ips.remove((String) it.next());
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         final StringBuilder output = new StringBuilder();
 
         output.append("UUID: ").append(uuid.toString()).append("\n");
@@ -72,92 +68,73 @@ public class TFM_Admin
         return output.toString();
     }
 
-    public UUID getUniqueId()
-    {
+    public UUID getUniqueId() {
         return uuid;
     }
 
-    public void setLastLoginName(String lastLoginName)
-    {
+    public void setLastLoginName(String lastLoginName) {
         this.lastLoginName = lastLoginName;
     }
 
-    public String getLastLoginName()
-    {
+    public String getLastLoginName() {
         return lastLoginName;
     }
 
-    public List<String> getIps()
-    {
+    public List<String> getIps() {
         return Collections.unmodifiableList(ips);
     }
 
-    public void addIp(String ip)
-    {
-        if (!ips.contains(ip))
-        {
+    public void addIp(String ip) {
+        if (!ips.contains(ip)) {
             ips.add(ip);
         }
     }
 
-    public void addIps(List<String> ips)
-    {
-        for (String ip : ips)
-        {
+    public void addIps(List<String> ips) {
+        for (String ip : ips) {
             addIp(ip);
         }
     }
 
-    public void removeIp(String ip)
-    {
-        if (ips.contains(ip))
-        {
+    public void removeIp(String ip) {
+        if (ips.contains(ip)) {
             ips.remove(ip);
         }
     }
 
-    public void clearIPs()
-    {
+    public void clearIPs() {
         ips.clear();
     }
 
-    public Date getLastLogin()
-    {
+    public Date getLastLogin() {
         return lastLogin;
     }
 
-    public String getCustomLoginMessage()
-    {
+    public String getCustomLoginMessage() {
         return loginMessage;
     }
 
-    public boolean isSeniorAdmin()
-    {
+    public boolean isSeniorAdmin() {
         return isSeniorAdmin;
     }
 
-    public boolean isTelnetAdmin()
-    {
+    public boolean isTelnetAdmin() {
         return isTelnetAdmin;
     }
 
-    public List<String> getConsoleAliases()
-    {
+    public List<String> getConsoleAliases() {
         return Collections.unmodifiableList(consoleAliases);
     }
 
-    public void setLastLogin(Date lastLogin)
-    {
+    public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
 
-    public boolean isActivated()
-    {
+    public boolean isActivated() {
         return isActivated;
     }
 
-    public void setActivated(boolean isActivated)
-    {
+    public void setActivated(boolean isActivated) {
         this.isActivated = isActivated;
     }
 }

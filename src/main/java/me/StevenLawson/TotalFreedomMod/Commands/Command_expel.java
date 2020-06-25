@@ -12,33 +12,24 @@ import org.bukkit.util.Vector;
 
 @CommandPermissions(level = AdminLevel.SUPER, source = SourceType.ONLY_IN_GAME)
 @CommandParameters(description = "Push people away from you.", usage = "/<command> [radius] [strength]")
-public class Command_expel extends TFM_Command
-{
+public class Command_expel extends TFM_Command {
+
     @Override
-    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole)
-    {
+    public boolean run(CommandSender sender, Player sender_p, Command cmd, String commandLabel, String[] args, boolean senderIsConsole) {
         double radius = 20.0;
         double strength = 5.0;
 
-        if (args.length >= 1)
-        {
-            try
-            {
+        if (args.length >= 1) {
+            try {
                 radius = Math.max(1.0, Math.min(100.0, Double.parseDouble(args[0])));
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
             }
         }
 
-        if (args.length >= 2)
-        {
-            try
-            {
+        if (args.length >= 2) {
+            try {
                 strength = Math.max(0.0, Math.min(50.0, Double.parseDouble(args[1])));
-            }
-            catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
             }
         }
 
@@ -46,10 +37,8 @@ public class Command_expel extends TFM_Command
 
         final Vector senderPos = sender_p.getLocation().toVector();
         final List<Player> players = sender_p.getWorld().getPlayers();
-        for (final Player player : players)
-        {
-            if (player.equals(sender_p))
-            {
+        for (final Player player : players) {
+            if (player.equals(sender_p)) {
                 continue;
             }
 
@@ -57,16 +46,12 @@ public class Command_expel extends TFM_Command
             final Vector targetPosVec = targetPos.toVector();
 
             boolean inRange = false;
-            try
-            {
+            try {
                 inRange = targetPosVec.distanceSquared(senderPos) < (radius * radius);
-            }
-            catch (IllegalArgumentException ex)
-            {
+            } catch (IllegalArgumentException ex) {
             }
 
-            if (inRange)
-            {
+            if (inRange) {
                 player.getWorld().createExplosion(targetPos, 0.0f, false);
                 TFM_Util.setFlying(player, false);
                 player.setVelocity(targetPosVec.subtract(senderPos).normalize().multiply(strength));
@@ -74,12 +59,9 @@ public class Command_expel extends TFM_Command
             }
         }
 
-        if (pushedPlayers.isEmpty())
-        {
+        if (pushedPlayers.isEmpty()) {
             playerMsg("No players pushed.");
-        }
-        else
-        {
+        } else {
             playerMsg("Pushed " + pushedPlayers.size() + " players: " + StringUtils.join(pushedPlayers, ", "));
         }
 

