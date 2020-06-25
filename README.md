@@ -16,3 +16,5 @@ Additionally, Travis CI generates a binary for each commit to the repository. Wh
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) if you are interested in developing TotalFreedomMod.
 
 For information on how TotalFreedomMod is licensed, please see [LICENSE.md](LICENSE.md).
+
+Please join our Discord server for any discussion on TFM development and other TotalFreedom Organization projects.
